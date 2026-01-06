@@ -61,32 +61,49 @@
         .goal-card {
             flex: 0 0 calc(100% - 40px); margin: 0 20px;
             scroll-snap-align: center; scroll-snap-stop: always;
-            background: var(--card); border-radius: 24px; padding: 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            background: var(--card); border-radius: 24px; 
+            padding: 24px;
+            
+            /* [關鍵修改 1] 改為靠上對齊 (flex-start)，解決手機版文字跑版問題 */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; /* 讓內容緊貼頂部 */
+            padding-top: 40px; /* 上方留一點呼吸空間 */
+            padding-bottom: 40px;
+            text-align: center;
         }
 
-        /* 圖示區：彈性高度 */
+        /* 圖示區 */
         .goal-icon-area {
-            margin-bottom: 16px; 
+            /* [關鍵修改 2] 移除固定高度，讓圖表和文字自然靠近 */
+            /* min-height: 160px;  <-- 刪除這行 */
+            margin-bottom: 10px; /* 只留一點點間距 */
+            
             display: flex; justify-content: center; align-items: center;
             width: 100%; 
-            min-height: 160px; /* 至少有這個高度 */
-            overflow: visible; /* 允許內容稍微突出 */
+            overflow: visible;
         }
 
-        .goal-text-area h3 { margin: 0 0 6px 0; font-size: 16px; font-weight: 800; color: var(--text-main); }
-        .goal-text-area p { margin: 0; color: var(--text-sub); font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
+        .goal-text-area h3 { margin: 0 0 6px 0; font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .goal-text-area p { margin: 0; color: var(--text-sub); font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
         
-        /* 移除 progress-ring 的旋轉設定，避免切邊 */
         .progress-ring { transition: all 0.3s; }
         .progress-ring circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; }
 
         /* 長條圖樣式 */
-        .bar-wrapper { width: 100%; margin-top: 10px; text-align: left; }
-        .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--text-sub); font-weight: 600; }
+        .bar-wrapper { width: 100%; margin-top: 20px; text-align: left; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--text-sub); font-weight: 600; }
         .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
-        .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease-out; }
+        
+        /* [關鍵修改 3] 預設隱藏所有填充條，只有在 bar-wrapper 內才顯示 */
+        .bar-chart-fill { display: none; } 
+        .bar-wrapper .bar-chart-fill { 
+            display: block; /* 復活 */
+            height: 100%; 
+            border-radius: 5px; 
+            transition: width 0.5s ease-out; 
+        }
 
         /* 日期導航 */
         .date-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: var(--text-sub); font-weight: 600; }
@@ -167,7 +184,7 @@
             <div class="tasks-header">今日要完成的事</div>
             <div id="tasks-list"></div>
 
-            <footer id="daily-quote">“夢想的起點，是行動。”</footer>
+            <footer id="daily-quote">“夢想的起點，是行動(2)。”</footer>
             <button class="fab-btn" onclick="openAddTask()">+</button>
         </div>
     </div>
@@ -259,7 +276,7 @@
             } catch (e) { alert("新增失敗"); }
         }
 
-        // [v1.7 渲染邏輯：內縮安全區 + 雙排長條圖]
+        // [v2.0 結構重構：邏輯徹底分流 + 排版修正]
         function renderDashboard(data) {
             document.getElementById('daily-quote').innerText = data.quote;
             
@@ -269,6 +286,7 @@
             countdownArea.innerHTML = '';
 
             data.goals.forEach(goal => {
+                // 1. 倒數日 (獨立處理)
                 if (goal.name.includes("倒數") || goal.unit === "天") {
                     countdownArea.innerHTML = `<div class="countdown-number">${goal.total - goal.current}</div><div class="countdown-label">${goal.name} (剩餘)</div>`;
                     return;
@@ -277,20 +295,20 @@
                 let iconHtml = '';
                 let textHtml = '';
 
+                // 2. 環狀圖 (Ring Chart) - 嚴格禁止生成任何 Bar 相關的 HTML
                 if (goal.type === 'ring') {
-                    // === 環狀圖 (內縮法) ===
                     let percent = 0;
                     if(goal.total > 0) percent = Math.min(100, Math.round((goal.current / goal.total) * 100));
                     
                     const canvasSize = 200; 
                     const center = canvasSize / 2;
-                    // [關鍵] 半徑縮小為 55 (原本 60)，創造安全邊距
-                    const r = 55; 
+                    const r = 55; // 內縮安全區，防止切邊
                     const stroke = 12;
                     const c = 2 * Math.PI * r;
                     const off = c - (percent/100)*c;
                     const progressText = `${formatNumber(goal.current)} / ${formatNumber(goal.total)} ${goal.unit}`;
 
+                    // 純淨的 SVG，沒有任何雜質
                     iconHtml = `
                         <svg class="progress-ring" viewBox="0 0 ${canvasSize} ${canvasSize}" style="width: 100%; height: auto; max-width: 180px; overflow: visible; display: block; margin: auto;">
                             <circle cx="${center}" cy="${center}" r="${r}" stroke="#E8F1FA" stroke-width="${stroke}" fill="#F7FBFF" />
@@ -304,15 +322,13 @@
                     textHtml = `<h3>${goal.name}</h3><p>${progressText}</p>`;
 
                 } else {
-                    // === 長條圖 (雙排並列) ===
-                    // 找出兩者中較大的值當作分母 (Scale Max)，這樣圖表比例才對
+                    // 3. 長條圖 (Bar Chart) - 只有這裡會產生 .bar-wrapper
                     let maxVal = Math.max(goal.current, goal.total);
                     if (maxVal === 0) maxVal = 1;
 
                     let currentPercent = (goal.current / maxVal) * 100;
                     let totalPercent = (goal.total / maxVal) * 100;
 
-                    // 使用 App 原生繪圖：兩條線
                     iconHtml = `
                         <div class="bar-wrapper">
                             <div class="bar-label">
@@ -332,7 +348,7 @@
                             </div>
                         </div>
                     `;
-                    // 長條圖模式下，下方文字只顯示標題就好，因為數值已經在圖表上了
+                    // 長條圖因為資訊都在圖表上，文字區只放標題
                     textHtml = `<h3>${goal.name}</h3>`;
                 }
 
