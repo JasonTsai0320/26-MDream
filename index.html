@@ -31,86 +31,74 @@
             height: 100%; display: flex; flex-direction: column;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
 
-        .view { display: none; width: 100%; height: 100%; flex-direction: column; overflow-y: auto; }
+        .view { display: none; width: 100%; flex-direction: column; padding: 20px; }
         .view.active { display: flex; }
 
-        /* 啟動頁 */
-        #setup-view { justify-content: center; align-items: center; padding: 40px; text-align: center; }
-        input[type="url"] { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #CCC; margin-bottom: 16px; outline: none; font-size: 16px; }
-        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 600; width: 100%; font-size: 16px; cursor: pointer;}
-        
-        /* 主畫面 */
-        #main-view { padding: 20px; padding-bottom: 100px; }
-
-        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
-        .date-box h2 { font-size: 28px; margin: 0; font-weight: 700; }
-        .date-box span { color: var(--text-sub); font-size: 14px; }
-        .countdown-number { font-size: 32px; font-weight: 800; color: var(--primary); line-height: 1; }
-        .countdown-label { font-size: 11px; color: var(--text-sub); text-align: right;}
-
-        /* 輪播 */
-        .carousel-container {
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            gap: 0; margin: 0 -20px 20px -20px; padding: 0;
-            -ms-overflow-style: none; scrollbar-width: none;
-        }
-        .carousel-container::-webkit-scrollbar { display: none; }
-
-        .goal-card {
-            flex: 0 0 calc(100% - 40px); margin: 0 20px;
-            scroll-snap-align: center; scroll-snap-stop: always;
-            background: var(--card); border-radius: 24px; 
-            padding: 24px;
-            
-            /* [關鍵修改 1] 改為靠上對齊 (flex-start)，解決手機版文字跑版問題 */
+        /* === 1. Header 區域 === */
+        header { 
             display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: flex-start; /* 讓內容緊貼頂部 */
-            padding-top: 40px; /* 上方留一點呼吸空間 */
-            padding-bottom: 40px;
+            justify-content: space-between; 
+            align-items: center; /* 區塊垂直置中 */
+            margin-bottom: 24px; 
+            padding-top: 10px;
+            padding-left: 4px; padding-right: 4px;
+        }
+        
+        /* 左側日期：絕對靠左，加上括號後的平衡感 */
+        .header-date {
+            display: flex; flex-direction: column; 
+            justify-content: center; 
+            align-items: flex-start; /* [關鍵] 絕對靠左對齊 */
+            height: 64px; 
+            gap: 2px;
+        }
+        /* 數字稍微緊湊一點，更有力道 */
+        .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; color: var(--text-main); letter-spacing: -1px; }
+        .header-date span { font-size: 15px; color: var(--text-sub); font-weight: 600; margin-left: 1px; }
+
+        /* 中間標題 (徽章圓圈) */
+        .header-center { 
+            display: flex; justify-content: center; align-items: center;
+        }
+        .badge-ring { width: 64px; height: 64px; } 
+
+        /* 右側倒數：絕對靠右 */
+        .header-countdown { 
+            text-align: right; 
+            display: flex; flex-direction: column; 
+            justify-content: center; 
+            align-items: flex-end; /* [關鍵] 絕對靠右對齊 */
+            height: 64px;
+            gap: 2px;
+        }
+        .count-num { font-size: 36px; font-weight: 800; color: var(--primary); line-height: 1; letter-spacing: -1px; }
+        .count-label { font-size: 13px; color: var(--text-sub); font-weight: 500; }
+
+        /* === 2. 主卡片區域 (次目標長條圖) === */
+        .main-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
             text-align: center;
         }
 
-        /* 圖示區 */
-        .goal-icon-area {
-            /* [關鍵修改 2] 移除固定高度，讓圖表和文字自然靠近 */
-            /* min-height: 160px;  <-- 刪除這行 */
-            margin-bottom: 10px; /* 只留一點點間距 */
-            
-            display: flex; justify-content: center; align-items: center;
-            width: 100%; 
-            overflow: visible;
-        }
-
-        .goal-text-area h3 { margin: 0 0 6px 0; font-size: 18px; font-weight: 800; color: var(--text-main); }
-        .goal-text-area p { margin: 0; color: var(--text-sub); font-size: 14px; font-weight: 500; letter-spacing: 0.5px; }
-        
-        .progress-ring { transition: all 0.3s; }
-        .progress-ring circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; }
+        .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 20px; margin-bottom: 0; }
 
         /* 長條圖樣式 */
-        .bar-wrapper { width: 100%; margin-top: 20px; text-align: left; }
-        .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; color: var(--text-sub); font-weight: 600; }
-        .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+        .bar-wrapper { width: 100%; margin-top: 0px; text-align: left; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
+        .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
+        .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease-out; }
+
+        /* === 3. 任務列表區域 === */
+        .tasks-section { margin-bottom: 30px; flex-grow: 1; }
+        .tasks-header { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--text-main); padding-left: 4px; }
         
-        /* [關鍵修改 3] 預設隱藏所有填充條，只有在 bar-wrapper 內才顯示 */
-        .bar-chart-fill { display: none; } 
-        .bar-wrapper .bar-chart-fill { 
-            display: block; /* 復活 */
-            height: 100%; 
-            border-radius: 5px; 
-            transition: width 0.5s ease-out; 
-        }
-
-        /* 日期導航 */
-        .date-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: var(--text-sub); font-weight: 600; }
-        .nav-btn { background: none; border: none; font-size: 16px; color: var(--primary); cursor: pointer; padding: 8px 16px; }
-
-        /* 任務列表 */
-        .tasks-header { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--text-main); }
         .task-item {
             background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 10px;
             display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
@@ -122,27 +110,28 @@
         .task-item.done .task-content h4 { text-decoration: line-through; color: #BBB; }
         .task-content h4 { margin: 0; font-size: 16px; font-weight: 500; }
         .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
+        .edit-btn { background: none; border: none; color: #DDD; font-size: 18px; padding: 8px; cursor: pointer; margin-left: auto; }
 
-        .edit-btn { background: none; border: none; color: #DDD; font-size: 18px; padding: 8px; cursor: pointer; margin-left: auto; transition: 0.3s; }
-        .edit-btn:hover { color: var(--primary); }
+        /* === 4. 底部導航 === */
+        .footer-nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-top: 20px; padding-top: 20px; padding-bottom: 40px;
+            border-top: 1px solid #EEE;
+        }
+        .nav-btn { background: none; border: none; font-size: 16px; color: var(--primary); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .nav-center { font-size: 14px; color: var(--text-sub); font-weight: 500; }
 
+        /* 啟動頁 & FAB */
+        #setup-view { justify-content: center; align-items: center; text-align: center; height: 100%; }
+        input[type="url"] { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #CCC; margin-bottom: 16px; font-size: 16px; }
+        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 600; width: 100%; font-size: 16px; }
+        
         .fab-btn {
-            position: absolute; bottom: 30px; right: 20px;
+            position: fixed; bottom: 30px; right: 20px;
             width: 56px; height: 56px; border-radius: 50%;
             background-color: var(--primary); color: white;
             font-size: 32px; border: none; box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.2s; z-index: 10;
-        }
-        .fab-btn:active { transform: scale(0.9); }
-
-        /* Footer */
-        footer { 
-            margin-top: auto; padding: 20px; text-align: center; 
-            color: #C1A258; 
-            font-family: "Georgia", "Times New Roman", "Songti TC", serif; 
-            font-style: italic; font-weight: 600; font-size: 15px; letter-spacing: 1px; 
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100;
         }
 
         #loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
@@ -155,36 +144,41 @@
         <div id="loading-overlay"><div class="spinner"></div></div>
 
         <div id="setup-view" class="view">
-            <div style="margin-bottom: 40px;">
-                <h1 style="color:var(--primary);">Dream Machine</h1>
-                <p style="color:#888;">連結您的資料庫</p>
-            </div>
+            <h1 style="color:var(--primary); margin-bottom: 10px;">Dream Machine</h1>
+            <p style="color:#888; margin-bottom: 40px;">連結您的資料庫</p>
             <input type="url" id="api-url-input" placeholder="貼上 API 網址" />
             <button class="btn-primary" onclick="startApp()">啟動</button>
-            <p id="setup-error" style="color:red; margin-top:10px; font-size:12px; display:none;"></p>
+            <p id="setup-error" style="color:red; margin-top:10px; display:none;"></p>
         </div>
 
         <div id="main-view" class="view">
+            
             <header>
-                <div class="date-box">
-                    <h2 id="display-date">--/--</h2>
-                    <span id="display-weekday">Checking...</span>
+                <div class="header-date">
+                    <h1 id="display-date">--/--</h1>
+                    <span id="display-weekday">(Checking)</span>
                 </div>
-                <div id="countdown-area" style="text-align: right;"></div>
+                
+                <div class="header-center" id="header-main-goal"></div>
+                
+                <div class="header-countdown" id="header-countdown"></div>
             </header>
 
-            <div class="carousel-container" id="goals-carousel"></div>
-
-            <div class="date-nav">
-                <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
-                <span id="nav-label" style="font-size:14px;">今天</span>
-                <button class="nav-btn" onclick="changeDate(1)">明日 ▶</button>
+            <div id="main-goal-card" class="main-card">
+                <p style="color:#999;">讀取目標中...</p>
             </div>
 
-            <div class="tasks-header">今日要完成的事</div>
-            <div id="tasks-list"></div>
+            <div class="tasks-section">
+                <div class="tasks-header">今日要完成的事</div>
+                <div id="tasks-list"></div>
+            </div>
 
-            <footer id="daily-quote">“夢想的起點，是行動(2)。”</footer>
+            <div class="footer-nav">
+                <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
+                <span class="nav-center" id="nav-label">今天</span>
+                <button class="nav-btn" onclick="changeDate(1)">明日 ▶</button>
+            </div>
+            
             <button class="fab-btn" onclick="openAddTask()">+</button>
         </div>
     </div>
@@ -226,7 +220,7 @@
                 loadData(currentDateStr);
                 showView('main-view');
             } catch (e) {
-                document.getElementById('setup-error').innerText = "連線失敗，請檢查權限是否為 Anyone";
+                document.getElementById('setup-error').innerText = "連線失敗";
                 document.getElementById('setup-error').style.display = 'block';
             } finally {
                 showLoading(false);
@@ -242,11 +236,8 @@
                 if (json.status === 'success') {
                     renderDashboard(json.data);
                 }
-            } catch (e) {
-                console.error("更新失敗", e);
-            } finally {
-                showLoading(false);
-            }
+            } catch (e) { console.error("Update failed", e); } 
+            finally { showLoading(false); }
         }
 
         function changeDate(delta) {
@@ -262,8 +253,110 @@
             const isToday = d.toDateString() === today.toDateString();
             document.getElementById('nav-label').innerText = isToday ? "今天" : dateStr;
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
+            
             const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            document.getElementById('display-weekday').innerText = days[d.getDay()];
+            // [關鍵修改] 加上括號，增加視覺穩定度
+            document.getElementById('display-weekday').innerText = `(${days[d.getDay()]})`;
+        }
+
+        function renderDashboard(data) {
+            const headerTitleEl = document.getElementById('header-main-goal');
+            const headerCountEl = document.getElementById('header-countdown');
+            const mainCardEl = document.getElementById('main-goal-card');
+            
+            let ringGoal = null;
+            let barGoal = null;
+            let countdownGoal = null;
+
+            data.goals.forEach(goal => {
+                if (goal.name.includes("倒數") || goal.unit === "天") {
+                    countdownGoal = goal;
+                } else if (goal.type === 'ring') {
+                    if (!ringGoal) ringGoal = goal;
+                } else {
+                    if (!barGoal) barGoal = goal;
+                }
+            });
+
+            // 1. Header 中間：徽章 (內嵌堆疊)
+            if (ringGoal) {
+                let percent = 0;
+                if(ringGoal.total > 0) percent = Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100));
+                
+                let shortName = ringGoal.name.substring(0, 4); 
+
+                const badgeHtml = `
+                    <svg class="badge-ring" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="#F7FBFF" />
+                        <circle cx="32" cy="32" r="28" stroke="#4A90E2" stroke-width="5" fill="none" 
+                                stroke-dasharray="${2*Math.PI*28} ${2*Math.PI*28}" 
+                                style="stroke-dashoffset: ${2*Math.PI*28 * (1 - percent/100)}" 
+                                stroke-linecap="round" transform="rotate(-90 32 32)" />
+                        
+                        <text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" 
+                              font-size="24" font-weight="900" fill="#4A90E2" style="font-family: Arial, sans-serif;">
+                            ${percent}%
+                        </text>
+                        
+                        <text x="50%" y="72%" dominant-baseline="middle" text-anchor="middle" 
+                              font-size="9" font-weight="600" fill="#999999" style="letter-spacing: -0.5px;">
+                            ${shortName}
+                        </text>
+                    </svg>
+                `;
+
+                headerTitleEl.innerHTML = badgeHtml;
+            } else {
+                headerTitleEl.innerHTML = ``;
+            }
+
+            // 2. Header 右側：倒數
+            if (countdownGoal) {
+                headerCountEl.innerHTML = `
+                    <div class="count-num">${countdownGoal.total - countdownGoal.current}</div>
+                    <div class="count-label">倒數天數</div>
+                `;
+            }
+
+            // 3. Main Card：次目標
+            if (barGoal) {
+                let maxVal = Math.max(barGoal.current, barGoal.total) || 1;
+                let currentPercent = (barGoal.current / maxVal) * 100;
+                let totalPercent = (barGoal.total / maxVal) * 100;
+
+                mainCardEl.innerHTML = `
+                    <div class="bar-wrapper">
+                        <div class="bar-label"><span>現況</span><span style="color:#4A90E2;">${formatNumber(barGoal.current)} ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${currentPercent}%; background-color: #4A90E2;"></div></div>
+                        
+                        <div class="bar-label"><span>目標</span><span style="color:#C1A258;">${formatNumber(barGoal.total)} ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${totalPercent}%; background-color: #C1A258;"></div></div>
+                    </div>
+                    <h3 class="card-title">${barGoal.name}</h3>
+                `;
+            } else {
+                mainCardEl.innerHTML = `<p style="color:#999; padding:20px;">尚無次目標</p>`;
+            }
+
+            // 4. 任務
+            const taskList = document.getElementById('tasks-list');
+            taskList.innerHTML = '';
+            data.tasks.forEach(task => renderTaskItem(task, taskList));
+        }
+
+        function renderTaskItem(task, container) {
+            const item = document.createElement('div');
+            item.className = `task-item ${task.isDone ? 'done' : ''}`;
+            item.onclick = (e) => {
+                if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                toggleTask(item, task.name, !item.classList.contains('done'));
+            };
+            item.innerHTML = `
+                <div class="checkbox"></div>
+                <div class="task-content"><h4>${task.name}</h4><p id="note-${task.name}">${task.note ? task.note : ''}</p></div>
+                <button class="edit-btn" onclick="editNote(event, '${task.name}', '${task.note || ''}')">✎</button>
+            `;
+            container.appendChild(item);
         }
 
         async function openAddTask() {
@@ -276,126 +369,15 @@
             } catch (e) { alert("新增失敗"); }
         }
 
-        // [v2.0 結構重構：邏輯徹底分流 + 排版修正]
-        function renderDashboard(data) {
-            document.getElementById('daily-quote').innerText = data.quote;
-            
-            const carousel = document.getElementById('goals-carousel');
-            const countdownArea = document.getElementById('countdown-area');
-            carousel.innerHTML = '';
-            countdownArea.innerHTML = '';
-
-            data.goals.forEach(goal => {
-                // 1. 倒數日 (獨立處理)
-                if (goal.name.includes("倒數") || goal.unit === "天") {
-                    countdownArea.innerHTML = `<div class="countdown-number">${goal.total - goal.current}</div><div class="countdown-label">${goal.name} (剩餘)</div>`;
-                    return;
-                }
-
-                let iconHtml = '';
-                let textHtml = '';
-
-                // 2. 環狀圖 (Ring Chart) - 嚴格禁止生成任何 Bar 相關的 HTML
-                if (goal.type === 'ring') {
-                    let percent = 0;
-                    if(goal.total > 0) percent = Math.min(100, Math.round((goal.current / goal.total) * 100));
-                    
-                    const canvasSize = 200; 
-                    const center = canvasSize / 2;
-                    const r = 55; // 內縮安全區，防止切邊
-                    const stroke = 12;
-                    const c = 2 * Math.PI * r;
-                    const off = c - (percent/100)*c;
-                    const progressText = `${formatNumber(goal.current)} / ${formatNumber(goal.total)} ${goal.unit}`;
-
-                    // 純淨的 SVG，沒有任何雜質
-                    iconHtml = `
-                        <svg class="progress-ring" viewBox="0 0 ${canvasSize} ${canvasSize}" style="width: 100%; height: auto; max-width: 180px; overflow: visible; display: block; margin: auto;">
-                            <circle cx="${center}" cy="${center}" r="${r}" stroke="#E8F1FA" stroke-width="${stroke}" fill="#F7FBFF" />
-                            <circle cx="${center}" cy="${center}" r="${r}" stroke="#4A90E2" stroke-width="${stroke}" fill="transparent" 
-                                    stroke-dasharray="${c} ${c}" style="stroke-dashoffset: ${off}" stroke-linecap="round"
-                                    transform="rotate(-90 ${center} ${center})" />
-                            <text x="50%" y="50%" dy="10" dominant-baseline="middle" text-anchor="middle" font-size="36" font-weight="900" fill="#4A90E2">
-                                ${percent}%
-                            </text>
-                        </svg>`;
-                    textHtml = `<h3>${goal.name}</h3><p>${progressText}</p>`;
-
-                } else {
-                    // 3. 長條圖 (Bar Chart) - 只有這裡會產生 .bar-wrapper
-                    let maxVal = Math.max(goal.current, goal.total);
-                    if (maxVal === 0) maxVal = 1;
-
-                    let currentPercent = (goal.current / maxVal) * 100;
-                    let totalPercent = (goal.total / maxVal) * 100;
-
-                    iconHtml = `
-                        <div class="bar-wrapper">
-                            <div class="bar-label">
-                                <span>現況</span>
-                                <span style="color:#4A90E2;">${formatNumber(goal.current)} ${goal.unit}</span>
-                            </div>
-                            <div class="bar-chart-bg">
-                                <div class="bar-chart-fill" style="width:${currentPercent}%; background-color: #4A90E2;"></div>
-                            </div>
-                            
-                            <div class="bar-label">
-                                <span>目標</span>
-                                <span style="color:#C1A258;">${formatNumber(goal.total)} ${goal.unit}</span>
-                            </div>
-                            <div class="bar-chart-bg">
-                                <div class="bar-chart-fill" style="width:${totalPercent}%; background-color: #C1A258;"></div>
-                            </div>
-                        </div>
-                    `;
-                    // 長條圖因為資訊都在圖表上，文字區只放標題
-                    textHtml = `<h3>${goal.name}</h3>`;
-                }
-
-                const card = document.createElement('div');
-                card.className = 'goal-card';
-                card.innerHTML = `<div class="goal-icon-area">${iconHtml}</div><div class="goal-text-area">${textHtml}</div>`;
-                carousel.appendChild(card);
-            });
-
-            const taskList = document.getElementById('tasks-list');
-            taskList.innerHTML = '';
-            data.tasks.forEach(task => renderTaskItem(task, taskList));
-        }
-
-        function renderTaskItem(task, container) {
-            const item = document.createElement('div');
-            item.className = `task-item ${task.isDone ? 'done' : ''}`;
-            
-            item.onclick = (e) => {
-                if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-                toggleTask(item, task.name, !item.classList.contains('done'));
-            };
-            
-            item.innerHTML = `
-                <div class="checkbox"></div>
-                <div class="task-content">
-                    <h4>${task.name}</h4>
-                    <p id="note-${task.name}">${task.note ? task.note : ''}</p>
-                </div>
-                <button class="edit-btn" onclick="editNote(event, '${task.name}', '${task.note || ''}')">✎</button>
-            `;
-            container.appendChild(item);
-        }
-
         async function editNote(e, taskName, oldNote) {
             e.stopPropagation();
             const newNote = prompt("請輸入心得或備註：", oldNote);
             if (newNote === null) return; 
-
             const noteEl = document.getElementById(`note-${taskName}`);
             if(noteEl) noteEl.innerText = newNote;
-
             try {
                 await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(taskName)}&note=${encodeURIComponent(newNote)}`);
-            } catch (e) {
-                alert("儲存備註失敗，請檢查網路");
-            }
+            } catch (e) { alert("儲存備註失敗"); }
         }
 
         function toggleTask(el, taskName, newStatus) {
