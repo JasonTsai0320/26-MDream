@@ -41,21 +41,20 @@
         header { 
             display: flex; 
             justify-content: space-between; 
-            align-items: center; /* 區塊垂直置中 */
+            align-items: center; 
             margin-bottom: 24px; 
             padding-top: 10px;
             padding-left: 4px; padding-right: 4px;
         }
         
-        /* 左側日期：絕對靠左，加上括號後的平衡感 */
+        /* 左側日期 */
         .header-date {
             display: flex; flex-direction: column; 
             justify-content: center; 
-            align-items: flex-start; /* [關鍵] 絕對靠左對齊 */
+            align-items: flex-start; 
             height: 64px; 
             gap: 2px;
         }
-        /* 數字稍微緊湊一點，更有力道 */
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; color: var(--text-main); letter-spacing: -1px; }
         .header-date span { font-size: 15px; color: var(--text-sub); font-weight: 600; margin-left: 1px; }
 
@@ -65,12 +64,12 @@
         }
         .badge-ring { width: 64px; height: 64px; } 
 
-        /* 右側倒數：絕對靠右 */
+        /* 右側倒數 */
         .header-countdown { 
             text-align: right; 
             display: flex; flex-direction: column; 
             justify-content: center; 
-            align-items: flex-end; /* [關鍵] 絕對靠右對齊 */
+            align-items: flex-end; 
             height: 64px;
             gap: 2px;
         }
@@ -186,7 +185,13 @@
     <script>
         const CACHE_KEY_URL = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY_URL);
-        let currentDateStr = new Date().toISOString().split('T')[0];
+        
+        // [關鍵修改] 解決時區問題：手動組裝當地時間字串
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        let currentDateStr = `${year}-${month}-${day}`;
 
         function formatNumber(num) {
             if (!num) return '0';
@@ -216,7 +221,13 @@
                 await fetch(`${url}?action=getData`);
                 localStorage.setItem(CACHE_KEY_URL, url);
                 currentApiUrl = url;
-                currentDateStr = new Date().toISOString().split('T')[0];
+                // 重新抓取當下時間
+                const d = new Date();
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                currentDateStr = `${y}-${m}-${dd}`;
+                
                 loadData(currentDateStr);
                 showView('main-view');
             } catch (e) {
@@ -255,7 +266,6 @@
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
             
             const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            // [關鍵修改] 加上括號，增加視覺穩定度
             document.getElementById('display-weekday').innerText = `(${days[d.getDay()]})`;
         }
 
@@ -278,7 +288,7 @@
                 }
             });
 
-            // 1. Header 中間：徽章 (內嵌堆疊)
+            // 1. Header 中間：徽章 (字體修正版)
             if (ringGoal) {
                 let percent = 0;
                 if(ringGoal.total > 0) percent = Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100));
@@ -304,7 +314,6 @@
                         </text>
                     </svg>
                 `;
-
                 headerTitleEl.innerHTML = badgeHtml;
             } else {
                 headerTitleEl.innerHTML = ``;
