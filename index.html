@@ -65,10 +65,13 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
 
+        /* [修改] 圖示區：移除固定高度，改用 padding 與自動高度，適應性更強 */
         .goal-icon-area {
-            margin-bottom: 16px; /* 增加呼吸感 */
+            margin-bottom: 12px; 
             display: flex; justify-content: center; align-items: center;
-            width: 100%; height: 160px;
+            width: 100%; 
+            min-height: 160px; /* 確保至少有空間，但可以延伸 */
+            overflow: visible; /* 關鍵：允許圖表稍微超出邊界而不被切掉 */
         }
 
         .goal-text-area h3 { margin: 0 0 6px 0; font-size: 16px; font-weight: 800; color: var(--text-main); }
@@ -112,11 +115,11 @@
         }
         .fab-btn:active { transform: scale(0.9); }
 
-        /* [修改] 每日金句：暗金色 + 文青字體 */
+        /* 每日金句：暗金色 + 文青字體 */
         footer { 
             margin-top: auto; padding: 20px; text-align: center; 
-            color: #C1A258; /* 暗金色 */
-            font-family: "Georgia", "Times New Roman", "Songti TC", serif; /* 襯線體 */
+            color: #C1A258; 
+            font-family: "Georgia", "Times New Roman", "Songti TC", serif; 
             font-style: italic; font-weight: 600; font-size: 15px; letter-spacing: 1px; 
             text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
         }
@@ -252,7 +255,7 @@
             } catch (e) { alert("新增失敗"); }
         }
 
-        // [更新] 渲染儀表板 (含淡藍色主圖優化)
+        // [更新] 渲染儀表板 (響應式圖表 SVG)
         function renderDashboard(data) {
             document.getElementById('daily-quote').innerText = data.quote;
             
@@ -275,17 +278,22 @@
                 const progressText = `${formatNumber(goal.current)} / ${formatNumber(goal.total)} ${goal.unit}`;
 
                 if (goal.type === 'ring') {
-                    const size = 150; 
-                    const r = 60; 
+                    // [關鍵修改] 響應式 SVG 設定
+                    // 1. 設定畫布大小為 160 (加大空間)
+                    const canvasSize = 160; 
+                    const center = canvasSize / 2; // 80
+                    const r = 60; // 半徑
                     const stroke = 12;
                     const c = 2 * Math.PI * r;
                     const off = c - (percent/100)*c;
-                    // 淡藍色優化
+                    
+                    // 2. 使用 viewBox 屬性，讓 SVG 可隨螢幕縮放
+                    // style 中限制最大寬度為 160px，但允許縮小
                     iconHtml = `
-                        <svg class="progress-ring" width="${size}" height="${size}">
-                            <circle stroke="#E8F1FA" stroke-width="${stroke}" fill="#F7FBFF" r="${r}" cx="${size/2}" cy="${size/2}"/>
-                            <circle stroke="#4A90E2" stroke-width="${stroke}" fill="transparent" r="${r}" cx="${size/2}" cy="${size/2}" stroke-dasharray="${c} ${c}" style="stroke-dashoffset: ${off}" stroke-linecap="round"/>
-                            <text x="50%" y="50%" dy="2.5" dominant-baseline="middle" text-anchor="middle" font-size="32" font-weight="800" fill="#4A90E2" transform="rotate(90 ${size/2} ${size/2})">${percent}%</text>
+                        <svg class="progress-ring" viewBox="0 0 ${canvasSize} ${canvasSize}" style="width: 100%; height: auto; max-width: 180px;">
+                            <circle stroke="#E8F1FA" stroke-width="${stroke}" fill="#F7FBFF" r="${r}" cx="${center}" cy="${center}"/>
+                            <circle stroke="#4A90E2" stroke-width="${stroke}" fill="transparent" r="${r}" cx="${center}" cy="${center}" stroke-dasharray="${c} ${c}" style="stroke-dashoffset: ${off}" stroke-linecap="round"/>
+                            <text x="50%" y="50%" dy="2.5" dominant-baseline="middle" text-anchor="middle" font-size="32" font-weight="800" fill="#4A90E2" transform="rotate(90 ${center} ${center})">${percent}%</text>
                         </svg>`;
                     textHtml = `<h3>${goal.name}</h3><p>${progressText}</p>`;
                 } else {
