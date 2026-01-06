@@ -7,6 +7,7 @@
     <style>
         :root {
             --primary: #4A90E2; /* 夢想藍 */
+            --gold: #C1A258;    /* 質感金 */
             --bg: #F5F5F7;      /* 背景灰 */
             --card: #FFFFFF;    /* 卡片白 */
             --text-main: #1D1D1F;
@@ -65,24 +66,27 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
 
-        /* [修改] 圖示區：移除固定高度，改用 padding 與自動高度，適應性更強 */
+        /* 圖示區：彈性高度 */
         .goal-icon-area {
-            margin-bottom: 12px; 
+            margin-bottom: 16px; 
             display: flex; justify-content: center; align-items: center;
             width: 100%; 
-            min-height: 160px; /* 確保至少有空間，但可以延伸 */
-            overflow: visible; /* 關鍵：允許圖表稍微超出邊界而不被切掉 */
+            min-height: 160px; /* 至少有這個高度 */
+            overflow: visible; /* 允許內容稍微突出 */
         }
 
         .goal-text-area h3 { margin: 0 0 6px 0; font-size: 16px; font-weight: 800; color: var(--text-main); }
         .goal-text-area p { margin: 0; color: var(--text-sub); font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
-        .goal-text-area .highlight-percent { display: block; font-size: 36px; font-weight: 900; color: var(--primary); margin-bottom: 4px; line-height: 1; }
-
-        .bar-chart-bg { width: 80%; background: #EEE; height: 16px; border-radius: 8px; overflow: hidden; }
-        .bar-chart-fill { background: var(--primary); height: 100%; border-radius: 8px; transition: width 0.5s ease-out; }
         
-        .progress-ring { transform: rotate(-90deg); }
+        /* 移除 progress-ring 的旋轉設定，避免切邊 */
+        .progress-ring { transition: all 0.3s; }
         .progress-ring circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; }
+
+        /* 長條圖樣式 */
+        .bar-wrapper { width: 100%; margin-top: 10px; text-align: left; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--text-sub); font-weight: 600; }
+        .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+        .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease-out; }
 
         /* 日期導航 */
         .date-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: var(--text-sub); font-weight: 600; }
@@ -115,7 +119,7 @@
         }
         .fab-btn:active { transform: scale(0.9); }
 
-        /* 每日金句：暗金色 + 文青字體 */
+        /* Footer */
         footer { 
             margin-top: auto; padding: 20px; text-align: center; 
             color: #C1A258; 
@@ -255,7 +259,7 @@
             } catch (e) { alert("新增失敗"); }
         }
 
-        // [更新] 渲染儀表板 (響應式圖表 SVG)
+        // [v1.7 渲染邏輯：內縮安全區 + 雙排長條圖]
         function renderDashboard(data) {
             document.getElementById('daily-quote').innerText = data.quote;
             
@@ -270,35 +274,66 @@
                     return;
                 }
 
-                let percent = 0;
-                if(goal.total > 0) percent = Math.min(100, Math.round((goal.current / goal.total) * 100));
-                
                 let iconHtml = '';
                 let textHtml = '';
-                const progressText = `${formatNumber(goal.current)} / ${formatNumber(goal.total)} ${goal.unit}`;
 
                 if (goal.type === 'ring') {
-                    // [關鍵修改] 響應式 SVG 設定
-                    // 1. 設定畫布大小為 160 (加大空間)
-                    const canvasSize = 160; 
-                    const center = canvasSize / 2; // 80
-                    const r = 60; // 半徑
+                    // === 環狀圖 (內縮法) ===
+                    let percent = 0;
+                    if(goal.total > 0) percent = Math.min(100, Math.round((goal.current / goal.total) * 100));
+                    
+                    const canvasSize = 200; 
+                    const center = canvasSize / 2;
+                    // [關鍵] 半徑縮小為 55 (原本 60)，創造安全邊距
+                    const r = 55; 
                     const stroke = 12;
                     const c = 2 * Math.PI * r;
                     const off = c - (percent/100)*c;
-                    
-                    // 2. 使用 viewBox 屬性，讓 SVG 可隨螢幕縮放
-                    // style 中限制最大寬度為 160px，但允許縮小
+                    const progressText = `${formatNumber(goal.current)} / ${formatNumber(goal.total)} ${goal.unit}`;
+
                     iconHtml = `
-                        <svg class="progress-ring" viewBox="0 0 ${canvasSize} ${canvasSize}" style="width: 100%; height: auto; max-width: 180px;">
-                            <circle stroke="#E8F1FA" stroke-width="${stroke}" fill="#F7FBFF" r="${r}" cx="${center}" cy="${center}"/>
-                            <circle stroke="#4A90E2" stroke-width="${stroke}" fill="transparent" r="${r}" cx="${center}" cy="${center}" stroke-dasharray="${c} ${c}" style="stroke-dashoffset: ${off}" stroke-linecap="round"/>
-                            <text x="50%" y="50%" dy="2.5" dominant-baseline="middle" text-anchor="middle" font-size="32" font-weight="800" fill="#4A90E2" transform="rotate(90 ${center} ${center})">${percent}%</text>
+                        <svg class="progress-ring" viewBox="0 0 ${canvasSize} ${canvasSize}" style="width: 100%; height: auto; max-width: 180px; overflow: visible; display: block; margin: auto;">
+                            <circle cx="${center}" cy="${center}" r="${r}" stroke="#E8F1FA" stroke-width="${stroke}" fill="#F7FBFF" />
+                            <circle cx="${center}" cy="${center}" r="${r}" stroke="#4A90E2" stroke-width="${stroke}" fill="transparent" 
+                                    stroke-dasharray="${c} ${c}" style="stroke-dashoffset: ${off}" stroke-linecap="round"
+                                    transform="rotate(-90 ${center} ${center})" />
+                            <text x="50%" y="50%" dy="10" dominant-baseline="middle" text-anchor="middle" font-size="36" font-weight="900" fill="#4A90E2">
+                                ${percent}%
+                            </text>
                         </svg>`;
                     textHtml = `<h3>${goal.name}</h3><p>${progressText}</p>`;
+
                 } else {
-                    iconHtml = `<div class="bar-chart-bg" style="height: 18px; width: 85%;"><div class="bar-chart-fill" style="width:${percent}%;"></div></div>`;
-                    textHtml = `<h3>${goal.name}</h3><span class="highlight-percent">${percent}%</span><p>目標: ${formatNumber(goal.total)} ${goal.unit}</p>`;
+                    // === 長條圖 (雙排並列) ===
+                    // 找出兩者中較大的值當作分母 (Scale Max)，這樣圖表比例才對
+                    let maxVal = Math.max(goal.current, goal.total);
+                    if (maxVal === 0) maxVal = 1;
+
+                    let currentPercent = (goal.current / maxVal) * 100;
+                    let totalPercent = (goal.total / maxVal) * 100;
+
+                    // 使用 App 原生繪圖：兩條線
+                    iconHtml = `
+                        <div class="bar-wrapper">
+                            <div class="bar-label">
+                                <span>現況</span>
+                                <span style="color:#4A90E2;">${formatNumber(goal.current)} ${goal.unit}</span>
+                            </div>
+                            <div class="bar-chart-bg">
+                                <div class="bar-chart-fill" style="width:${currentPercent}%; background-color: #4A90E2;"></div>
+                            </div>
+                            
+                            <div class="bar-label">
+                                <span>目標</span>
+                                <span style="color:#C1A258;">${formatNumber(goal.total)} ${goal.unit}</span>
+                            </div>
+                            <div class="bar-chart-bg">
+                                <div class="bar-chart-fill" style="width:${totalPercent}%; background-color: #C1A258;"></div>
+                            </div>
+                        </div>
+                    `;
+                    // 長條圖模式下，下方文字只顯示標題就好，因為數值已經在圖表上了
+                    textHtml = `<h3>${goal.name}</h3>`;
                 }
 
                 const card = document.createElement('div');
