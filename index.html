@@ -6,137 +6,66 @@
     <title>我的夢想機 Dream Machine</title>
     <style>
         :root {
-            --primary: #4A90E2; /* 夢想藍 */
-            --gold: #C1A258;    /* 質感金 */
-            --bg: #F5F5F7;      /* 背景灰 */
-            --card: #FFFFFF;    /* 卡片白 */
-            --text-main: #1D1D1F;
-            --text-sub: #86868B;
+            --primary: #4A90E2; --gold: #C1A258; --bg: #F5F5F7; --card: #FFFFFF;
+            --text-main: #1D1D1F; --text-sub: #86868B;
         }
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body { 
-            margin: 0; padding: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #EEF1F5; 
-            color: var(--text-main); 
-            height: 100vh; 
-            display: flex; justify-content: center; 
+            margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            background-color: #EEF1F5; color: var(--text-main); height: 100vh; display: flex; justify-content: center;
+            overscroll-behavior-y: contain; 
         }
-
         .app-container {
-            width: 100%; max-width: 480px;
-            background-color: var(--bg);
-            height: 100%; display: flex; flex-direction: column;
-            position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            overflow-y: auto;
+            width: 100%; max-width: 480px; background-color: var(--bg); height: 100%; 
+            display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow-y: auto; transition: transform 0.2s;
         }
-
         .view { display: none; width: 100%; flex-direction: column; padding: 20px; }
         .view.active { display: flex; }
 
-        /* === 1. Header 區域 (時區修復+完美對齊) === */
-        header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 24px; padding-top: 10px;
-            padding-left: 4px; padding-right: 4px;
-        }
-        
-        .header-date {
-            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
-            height: 64px; gap: 2px;
-        }
+        /* === Header === */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; padding-left: 4px; padding-right: 4px;}
+        .header-date { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; height: 64px; gap: 2px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; }
         .header-date span { font-size: 15px; color: var(--text-sub); font-weight: 600; }
-
-        .header-center { display: flex; justify-content: center; align-items: center; }
         .badge-ring { width: 64px; height: 64px; } 
-
-        .header-countdown { 
-            text-align: right; display: flex; flex-direction: column; 
-            justify-content: center; align-items: flex-end; 
-            height: 64px; gap: 2px;
-        }
+        .header-countdown { text-align: right; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; height: 64px; gap: 2px; }
         .count-num { font-size: 36px; font-weight: 800; color: var(--primary); line-height: 1; letter-spacing: -1px; }
         .count-label { font-size: 13px; color: var(--text-sub); font-weight: 500; }
 
-        /* === 2. 主卡片區域 (次目標) === */
-        .main-card {
-            background: var(--card); border-radius: 24px; padding: 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center;
-        }
+        /* === 卡片與任務 === */
+        .main-card { background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 20px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
         .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
         .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease-out; }
 
-        /* === 3. 任務列表區域 (TOP3 新架構) === */
         .tasks-section { margin-bottom: 10px; flex-grow: 1; }
-        
-        /* 標題與新增按鈕整合列 */
-        .tasks-header-row {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 16px; padding: 0 4px;
-        }
+        .tasks-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
         .tasks-header { font-size: 20px; font-weight: 800; color: var(--text-main); }
-        
-        /* 整合式新增按鈕 */
-        .add-task-inline {
-            width: 32px; height: 32px; border-radius: 50%;
-            background-color: var(--primary); color: white;
-            border: none; font-size: 22px; font-weight: bold;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
-            transition: 0.2s;
-        }
-        .add-task-inline:active { transform: scale(0.9); }
-
-        .task-item {
-            background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 10px;
-            display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            transition: 0.2s;
-        }
-        
-        /* 序號/核取方塊 樣式 */
-        .task-number {
-            width: 26px; height: 26px; 
-            border: 2px solid #DDD; border-radius: 50%;
-            margin-right: 12px; flex-shrink: 0; margin-top: 2px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 800; color: var(--text-sub);
-            transition: 0.3s;
-        }
-        .task-item.done .task-number {
-            background-color: var(--primary); border-color: var(--primary);
-            color: white;
-        }
+        .add-task-inline { width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary); color: white; border: none; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3); }
+        .task-item { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 10px; display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .task-number { width: 26px; height: 26px; border: 2px solid #DDD; border-radius: 50%; margin-right: 12px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--text-sub); }
+        .task-item.done .task-number { background-color: var(--primary); border-color: var(--primary); color: white; }
         .task-item.done .task-content h4 { text-decoration: line-through; color: #BBB; }
         .task-content h4 { margin: 0; font-size: 16px; font-weight: 600; }
         .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
         .edit-btn { background: none; border: none; color: #DDD; font-size: 18px; padding: 8px; cursor: pointer; margin-left: auto; }
 
-        /* === 金句與底部導航 === */
-        .quote-area {
-            text-align: center; margin: 20px 0;
-            color: var(--gold); font-family: "Georgia", serif;
-            font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px;
-        }
-        .footer-nav { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding-bottom: 40px; border-top: 1px solid #EEE; padding-top: 20px;
-        }
+        .quote-area { text-align: center; margin: 20px 0; color: var(--gold); font-family: "Georgia", serif; font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; }
+        .footer-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 40px; border-top: 1px solid #EEE; padding-top: 20px; }
         .nav-btn { background: none; border: none; font-size: 16px; color: var(--primary); font-weight: 600; cursor: pointer; }
         .nav-center { font-size: 14px; color: var(--text-sub); }
 
+        #pull-indicator { position: absolute; top: -50px; left: 0; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-sub); }
         #loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
         .spinner { width: 40px; height: 40px; border: 4px solid #DDD; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" id="scroll-container">
+        <div id="pull-indicator">向下移動以更新...</div>
         <div id="loading-overlay"><div class="spinner"></div></div>
 
         <div id="setup-view" class="view">
@@ -155,9 +84,7 @@
                 <div class="header-center" id="header-main-goal"></div>
                 <div class="header-countdown" id="header-countdown"></div>
             </header>
-
             <div id="main-goal-card" class="main-card"></div>
-
             <div class="tasks-section">
                 <div class="tasks-header-row">
                     <div class="tasks-header">今日 TOP3</div>
@@ -165,9 +92,7 @@
                 </div>
                 <div id="tasks-list"></div>
             </div>
-
             <div id="daily-quote" class="quote-area"></div>
-
             <div class="footer-nav">
                 <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
                 <span class="nav-center" id="nav-label">今天</span>
@@ -179,23 +104,33 @@
     <script>
         const CACHE_KEY_URL = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY_URL);
-        
-        // 時區修正
-        function getTodayStr() {
-            const d = new Date();
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
+        function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
         let currentDateStr = getTodayStr();
 
-        function formatNumber(num) {
-            if (!num) return '0';
-            return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString();
-        }
+        // 智慧功能
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr); });
+        let startY = 0;
+        const scrollContainer = document.getElementById('scroll-container');
+        const pullIndicator = document.getElementById('pull-indicator');
+        scrollContainer.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; });
+        scrollContainer.addEventListener('touchmove', (e) => {
+            const y = e.touches[0].pageY; const pullDistance = y - startY;
+            if (scrollContainer.scrollTop === 0 && pullDistance > 0) {
+                const move = Math.min(pullDistance / 2, 60);
+                scrollContainer.style.transform = `translateY(${move}px)`;
+                pullIndicator.innerText = move > 50 ? "放開以更新..." : "繼續下拉...";
+            }
+        });
+        scrollContainer.addEventListener('touchend', () => {
+            if (scrollContainer.scrollTop === 0) {
+                const currentTransform = new WebKitCSSMatrix(getComputedStyle(scrollContainer).transform).m42;
+                if (currentTransform > 50) loadData(currentDateStr);
+                scrollContainer.style.transform = 'translateY(0)';
+            }
+        });
 
-        function init() {
-            if (currentApiUrl) { showView('main-view'); loadData(currentDateStr); }
-            else { showView('setup-view'); }
-        }
+        function formatNumber(num) { if (!num) return '0'; return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString(); }
+        function init() { if (currentApiUrl) { showView('main-view'); loadData(currentDateStr); } else { showView('setup-view'); } }
 
         async function startApp() {
             const url = document.getElementById('api-url-input').value.trim();
@@ -234,7 +169,8 @@
             document.getElementById('nav-label').innerText = isToday ? "今天" : dateStr;
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
             const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            document.getElementById('display-weekday').innerText = `(${days[d.getDay()]})`;
+            // [修改點 1] 星格兩邊加上空格
+            document.getElementById('display-weekday').innerText = `( ${days[d.getDay()]} )`;
         }
 
         function renderDashboard(data) {
@@ -250,9 +186,9 @@
                 else barGoal = goal;
             });
 
-            // 徽章渲染 (3% 大, 12W 小灰)
             if (ringGoal) {
                 let percent = ringGoal.total > 0 ? Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100)) : 0;
+                // [修改點 2] y="48%"
                 headerTitleEl.innerHTML = `
                     <svg class="badge-ring" viewBox="0 0 64 64">
                         <circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="#F7FBFF" />
@@ -263,23 +199,11 @@
                         <text x="50%" y="72%" dominant-baseline="middle" text-anchor="middle" font-size="9" font-weight="600" fill="#999">${ringGoal.name.substring(0,4)}</text>
                     </svg>`;
             }
-
-            if (countdownGoal) {
-                headerCountEl.innerHTML = `<div class="count-num">${countdownGoal.total - countdownGoal.current}</div><div class="count-label">倒數天數</div>`;
-            }
-
+            if (countdownGoal) { headerCountEl.innerHTML = `<div class="count-num">${countdownGoal.total - countdownGoal.current}</div><div class="count-label">倒數天數</div>`; }
             if (barGoal) {
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
-                mainCardEl.innerHTML = `
-                    <div class="bar-wrapper">
-                        <div class="bar-label"><span>現況</span><span style="color:#4A90E2;">${formatNumber(barGoal.current)} ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: #4A90E2;"></div></div>
-                        <div class="bar-label"><span>目標</span><span style="color:#C1A258;">${formatNumber(barGoal.total)} ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: #C1A258;"></div></div>
-                    </div>
-                    <h3 class="card-title">${barGoal.name}</h3>`;
+                mainCardEl.innerHTML = `<div class="bar-wrapper"><div class="bar-label"><span>現況</span><span style="color:#4A90E2;">${formatNumber(barGoal.current)} ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: #4A90E2;"></div></div><div class="bar-label"><span>目標</span><span style="color:#C1A258;">${formatNumber(barGoal.total)} ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: #C1A258;"></div></div></div><h3 class="card-title">${barGoal.name}</h3>`;
             }
-
             const taskList = document.getElementById('tasks-list');
             taskList.innerHTML = '';
             data.tasks.forEach((task, index) => renderTaskItem(task, taskList, index + 1));
@@ -288,36 +212,21 @@
         function renderTaskItem(task, container, index) {
             const item = document.createElement('div');
             item.className = `task-item ${task.isDone ? 'done' : ''}`;
-            item.onclick = (e) => {
-                if(e.target.tagName === 'BUTTON') return;
-                toggleTask(item, task.name, !item.classList.contains('done'));
-            };
-            
-            // 如果是前三個任務顯示序號，後面顯示點點
+            item.onclick = (e) => { if(e.target.tagName === 'BUTTON') return; toggleTask(item, task.name, !item.classList.contains('done')); };
             const marker = index <= 3 ? index : '•';
-            
-            item.innerHTML = `
-                <div class="task-number">${task.isDone ? '✔' : marker}</div>
-                <div class="task-content">
-                    <h4>${task.name}</h4>
-                    <p id="note-${task.name}">${task.note || ''}</p>
-                </div>
-                <button class="edit-btn" onclick="editNote(event, '${task.name}', '${task.note || ''}')">✎</button>
-            `;
+            item.innerHTML = `<div class="task-number">${task.isDone ? '✔' : marker}</div><div class="task-content"><h4>${task.name}</h4><p id="note-${task.name}">${task.note || ''}</p></div><button class="edit-btn" onclick="editNote(event, '${task.name}', '${task.note || ''}')">✎</button>`;
             container.appendChild(item);
         }
 
         async function openAddTask() {
-            const name = prompt("新增任務名稱：");
-            if (!name) return;
+            const name = prompt("新增任務名稱："); if (!name) return;
             renderTaskItem({ name, isDone: false }, document.getElementById('tasks-list'), document.querySelectorAll('.task-item').length + 1);
             try { await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}`); } catch (e) {}
         }
 
         async function editNote(e, name, old) {
             e.stopPropagation();
-            const note = prompt("輸入備註：", old);
-            if (note === null) return;
+            const note = prompt("輸入備註：", old); if (note === null) return;
             document.getElementById(`note-${name}`).innerText = note;
             try { await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`); } catch (e) {}
         }
@@ -325,20 +234,13 @@
         function toggleTask(el, name, status) {
             if (status) el.classList.add('done'); else el.classList.remove('done');
             const numEl = el.querySelector('.task-number');
-            // 更新圖示
             if (status) numEl.innerText = '✔';
-            else {
-                // 恢復序號
-                const items = Array.from(document.querySelectorAll('.task-item'));
-                const idx = items.indexOf(el) + 1;
-                numEl.innerText = idx <= 3 ? idx : '•';
-            }
+            else { const items = Array.from(document.querySelectorAll('.task-item')); const idx = items.indexOf(el) + 1; numEl.innerText = idx <= 3 ? idx : '•'; }
             fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&isDone=${status}`);
         }
 
         function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? 'flex' : 'none'; }
-        
         init();
     </script>
 </body>
