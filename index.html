@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的夢想機 Dream Machine</title>
+    <style>
+        :root {
+            --primary: #4A90E2; /* 夢想藍 */
+            --bg: #F5F5F7;      /* 背景灰 */
+            --card: #FFFFFF;    /* 卡片白 */
+            --text-main: #1D1D1F;
+            --text-sub: #86868B;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #EEF1F5; /* 外部背景 */
+            color: var(--text-main); 
+            height: 100vh; 
+            display: flex; justify-content: center; 
+        }
+
+        /* === 手機模擬容器 === */
+        .app-container {
+            width: 100%; max-width: 480px;
+            background-color: var(--bg);
+            height: 100%; display: flex; flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* === 視圖切換 === */
+        .view { display: none; width: 100%; height: 100%; flex-direction: column; overflow-y: auto; }
+        .view.active { display: flex; }
+
+        /* === 1. 啟動頁 === */
+        #setup-view { justify-content: center; align-items: center; padding: 40px; text-align: center; }
+        input[type="url"] { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #CCC; margin-bottom: 16px; outline: none; font-size: 16px; }
+        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 600; width: 100%; font-size: 16px; cursor: pointer;}
+        
+        /* === 2. 主畫面 === */
+        #main-view { padding: 20px; padding-bottom: 100px; }
+
+        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+        .date-box h2 { font-size: 28px; margin: 0; font-weight: 700; }
+        .date-box span { color: var(--text-sub); font-size: 14px; }
+        .countdown-number { font-size: 32px; font-weight: 800; color: var(--primary); line-height: 1; }
+        .countdown-label { font-size: 11px; color: var(--text-sub); text-align: right;}
+
+        /* === 輪播設定 (一次一張，完美置中) === */
+        .carousel-container {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            gap: 0; /* 無間距 */
+            margin: 0 -20px 20px -20px; 
+            padding: 0; /* 無內距，由 margin 推擠 */
+            -ms-overflow-style: none; scrollbar-width: none;
+        }
+        .carousel-container::-webkit-scrollbar { display: none; }
+
+        .goal-card {
+            flex: 0 0 calc(100% - 40px); /* 滿版扣除左右留白 */
+            margin: 0 20px; /* 左右推開 */
+            scroll-snap-align: center;
+            scroll-snap-stop: always; /* 強制停在中間 */
+            
+            background: var(--card); border-radius: 24px; padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+
+        /* 圖示區 (高) */
+        .goal-icon-area {
+            margin-bottom: 12px;
+            display: flex; justify-content: center; align-items: center;
+            width: 100%; height: 160px;
+        }
+
+        /* 文字區 (小字粗體) */
+        .goal-text-area h3 {
+            margin: 0 0 6px 0;
+            font-size: 16px; font-weight: 800; color: var(--text-main);
+        }
+        .goal-text-area p {
+            margin: 0; color: var(--text-sub);
+            font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
+        }
+        .goal-text-area .highlight-percent {
+            display: block; font-size: 36px; font-weight: 900; color: var(--primary); margin-bottom: 4px; line-height: 1;
+        }
+
+        /* 長條圖 */
+        .bar-chart-bg { width: 80%; background: #EEE; height: 16px; border-radius: 8px; overflow: hidden; }
+        .bar-chart-fill { background: var(--primary); height: 100%; border-radius: 8px; transition: width 0.5s ease-out; }
+        
+        /* SVG */
+        .progress-ring { transform: rotate(-90deg); }
+        .progress-ring circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; }
+
+        /* 日期導航 */
+        .date-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; color: var(--text-sub); font-weight: 600;
+        }
+        .nav-btn { background: none; border: none; font-size: 16px; color: var(--primary); cursor: pointer; padding: 8px 16px; }
+
+        /* 任務列表 */
+        .tasks-header { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--text-main); }
+        .task-item {
+            background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 10px;
+            display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: 0.2s;
+        }
+        .checkbox {
+            width: 24px; height: 24px; border: 2px solid #DDD; border-radius: 6px; margin-right: 12px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+        }
+        .task-item.done .checkbox { background-color: var(--primary); border-color: var(--primary); }
+        .task-item.done .checkbox::after { content: '✔'; color: white; font-size: 14px; }
+        .task-item.done .task-content h4 { text-decoration: line-through; color: #BBB; }
+        .task-content h4 { margin: 0; font-size: 16px; font-weight: 500; }
+        .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
+
+        /* [新增] 編輯按鈕樣式 */
+        .edit-btn {
+            background: none; border: none; 
+            color: #DDD; font-size: 18px; 
+            padding: 8px; cursor: pointer;
+            margin-left: auto; /* 靠右對齊 */
+            transition: 0.3s;
+        }
+        .edit-btn:hover { color: var(--primary); }
+
+        /* FAB */
+        .fab-btn {
+            position: absolute; bottom: 30px; right: 20px;
+            width: 56px; height: 56px; border-radius: 50%;
+            background-color: var(--primary); color: white;
+            font-size: 32px; border: none; box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s; z-index: 10;
+        }
+        .fab-btn:active { transform: scale(0.9); }
+
+        footer { margin-top: auto; padding: 20px; text-align: center; font-style: italic; color: #888; font-size: 14px; }
+
+        #loading-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8);
+            display: none; justify-content: center; align-items: center; z-index: 999;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid #DDD; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div id="loading-overlay"><div class="spinner"></div></div>
+
+        <div id="setup-view" class="view">
+            <div style="margin-bottom: 40px;">
+                <h1 style="color:var(--primary);">Dream Machine</h1>
+                <p style="color:#888;">連結您的資料庫</p>
+            </div>
+            <input type="url" id="api-url-input" placeholder="貼上 API 網址" />
+            <button class="btn-primary" onclick="startApp()">啟動</button>
+            <p id="setup-error" style="color:red; margin-top:10px; font-size:12px; display:none;"></p>
+        </div>
+
+        <div id="main-view" class="view">
+            <header>
+                <div class="date-box">
+                    <h2 id="display-date">--/--</h2>
+                    <span id="display-weekday">Checking...</span>
+                </div>
+                <div id="countdown-area" style="text-align: right;"></div>
+            </header>
+
+            <div class="carousel-container" id="goals-carousel"></div>
+
+            <div class="date-nav">
+                <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
+                <span id="nav-label" style="font-size:14px;">今天</span>
+                <button class="nav-btn" onclick="changeDate(1)">明日 ▶</button>
+            </div>
+
+            <div class="tasks-header">今日要完成的事</div>
+            <div id="tasks-list"></div>
+
+            <footer id="daily-quote">“夢想的起點，是行動。”</footer>
+            <button class="fab-btn" onclick="openAddTask()">+</button>
+        </div>
+    </div>
+
+    <script>
+        const CACHE_KEY_URL = 'dream_machine_api_url';
+        let currentApiUrl = localStorage.getItem(CACHE_KEY_URL);
+        let currentDateStr = new Date().toISOString().split('T')[0];
+
+        function formatNumber(num) {
+            if (!num) return '0';
+            if (num >= 1000) {
+                let k = num / 1000;
+                return (k % 1 === 0 ? k : k.toFixed(1)) + 'k';
+            }
+            return num.toLocaleString();
+        }
+
+        function init() {
+            if (currentApiUrl) {
+                showView('main-view');
+                loadData(currentDateStr);
+            } else {
+                showView('setup-view');
+            }
+        }
+
+        async function startApp() {
+            const input = document.getElementById('api-url-input');
+            const url = input.value.trim();
+            if (!url.includes('script.google.com')) return alert("網址格式錯誤");
+
+            showLoading(true);
+            try {
+                await fetch(`${url}?action=getData`);
+                localStorage.setItem(CACHE_KEY_URL, url);
+                currentApiUrl = url;
+                currentDateStr = new Date().toISOString().split('T')[0];
+                loadData(currentDateStr);
+                showView('main-view');
+            } catch (e) {
+                document.getElementById('setup-error').innerText = "連線失敗，請檢查權限是否為 Anyone";
+                document.getElementById('setup-error').style.display = 'block';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function loadData(date) {
+            updateDateUI(date);
+            showLoading(true);
+            try {
+                const response = await fetch(`${currentApiUrl}?action=getData&date=${date}`);
+                const json = await response.json();
+                if (json.status === 'success') {
+                    renderDashboard(json.data);
+                }
+            } catch (e) {
+                console.error("更新失敗", e);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function changeDate(delta) {
+            const d = new Date(currentDateStr);
+            d.setDate(d.getDate() + delta);
+            currentDateStr = d.toISOString().split('T')[0];
+            loadData(currentDateStr);
+        }
+
+        function updateDateUI(dateStr) {
+            const d = new Date(dateStr);
+            const today = new Date();
+            const isToday = d.toDateString() === today.toDateString();
+            document.getElementById('nav-label').innerText = isToday ? "今天" : dateStr;
+            document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
+            const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+            document.getElementById('display-weekday').innerText = days[d.getDay()];
+        }
+
+        async function openAddTask() {
+            const taskName = prompt("請輸入新任務名稱：");
+            if (!taskName) return;
+            const tempTask = { name: taskName, isDone: false, note: "" };
+            renderTaskItem(tempTask, document.getElementById('tasks-list'));
+            try {
+                await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(taskName)}`);
+            } catch (e) { alert("新增失敗"); }
+        }
+
+        function renderDashboard(data) {
+            document.getElementById('daily-quote').innerText = data.quote;
+            
+            const carousel = document.getElementById('goals-carousel');
+            const countdownArea = document.getElementById('countdown-area');
+            carousel.innerHTML = '';
+            countdownArea.innerHTML = '';
+
+            data.goals.forEach(goal => {
+                if (goal.name.includes("倒數") || goal.unit === "天") {
+                    countdownArea.innerHTML = `<div class="countdown-number">${goal.total - goal.current}</div><div class="countdown-label">${goal.name} (剩餘)</div>`;
+                    return;
+                }
+
+                let percent = 0;
+                if(goal.total > 0) percent = Math.min(100, Math.round((goal.current / goal.total) * 100));
+                
+                let iconHtml = '';
+                let textHtml = '';
+                const progressText = `${formatNumber(goal.current)} / ${formatNumber(goal.total)} ${goal.unit}`;
+
+                if (goal.type === 'ring') {
+                    const size = 150; 
+                    const r = 60; 
+                    const stroke = 12;
+                    const c = 2 * Math.PI * r;
+                    const off = c - (percent/100)*c;
+                    
+                    iconHtml = `
+                        <svg class="progress-ring" width="${size}" height="${size}">
+                            <circle stroke="#E5E5EA" stroke-width="${stroke}" fill="transparent" r="${r}" cx="${size/2}" cy="${size/2}"/>
+                            <circle stroke="#4A90E2" stroke-width="${stroke}" fill="transparent" r="${r}" cx="${size/2}" cy="${size/2}" stroke-dasharray="${c} ${c}" style="stroke-dashoffset: ${off}" stroke-linecap="round"/>
+                            <text x="50%" y="50%" dy="2.5" dominant-baseline="middle" text-anchor="middle" font-size="32" font-weight="800" fill="#4A90E2" transform="rotate(90 ${size/2} ${size/2})">${percent}%</text>
+                        </svg>`;
+                    textHtml = `<h3>${goal.name}</h3><p>${progressText}</p>`;
+                } else {
+                    iconHtml = `<div class="bar-chart-bg" style="height: 18px; width: 85%;"><div class="bar-chart-fill" style="width:${percent}%;"></div></div>`;
+                    textHtml = `<h3>${goal.name}</h3><span class="highlight-percent">${percent}%</span><p>目標: ${formatNumber(goal.total)} ${goal.unit}</p>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'goal-card';
+                card.innerHTML = `<div class="goal-icon-area">${iconHtml}</div><div class="goal-text-area">${textHtml}</div>`;
+                carousel.appendChild(card);
+            });
+
+            const taskList = document.getElementById('tasks-list');
+            taskList.innerHTML = '';
+            data.tasks.forEach(task => renderTaskItem(task, taskList));
+        }
+
+        // [修改] 渲染任務 + 編輯按鈕
+        function renderTaskItem(task, container) {
+            const item = document.createElement('div');
+            item.className = `task-item ${task.isDone ? 'done' : ''}`;
+            
+            item.onclick = (e) => {
+                if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                toggleTask(item, task.name, !item.classList.contains('done'));
+            };
+            
+            item.innerHTML = `
+                <div class="checkbox"></div>
+                <div class="task-content">
+                    <h4>${task.name}</h4>
+                    <p id="note-${task.name}">${task.note ? task.note : ''}</p>
+                </div>
+                <button class="edit-btn" onclick="editNote(event, '${task.name}', '${task.note || ''}')">✎</button>
+            `;
+            container.appendChild(item);
+        }
+
+        // [新增] 編輯備註
+        async function editNote(e, taskName, oldNote) {
+            e.stopPropagation();
+            const newNote = prompt("請輸入心得或備註：", oldNote);
+            if (newNote === null) return; 
+
+            const noteEl = document.getElementById(`note-${taskName}`);
+            if(noteEl) noteEl.innerText = newNote;
+
+            try {
+                await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(taskName)}&note=${encodeURIComponent(newNote)}`);
+            } catch (e) {
+                alert("儲存備註失敗，請檢查網路");
+            }
+        }
+
+        function toggleTask(el, taskName, newStatus) {
+            if (newStatus) el.classList.add('done');
+            else el.classList.remove('done');
+            fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(taskName)}&isDone=${newStatus}`);
+        }
+
+        function showView(id) { document.querySelectorAll('.view').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function showLoading(show) { document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none'; }
+        
+        init();
+    </script>
+</body>
+</html>
