@@ -6,8 +6,13 @@
     <title>我的夢想機 Dream Machine</title>
     <style>
         :root {
-            --primary: #4A90E2; --gold: #C1A258; --bg: #F5F5F7; --card: #FFFFFF;
-            --text-main: #1D1D1F; --text-sub: #86868B;
+            --primary: #4A90E2; 
+            --gold: #C1A258; 
+            --bg: #F5F5F7; 
+            --card: #FFFFFF;
+            --text-main: #1D1D1F; 
+            --text-sub: #86868B;
+            --text-light: #C7C7CC; /* 用於非今日的淡灰色 */
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -25,13 +30,23 @@
 
         /* === Header === */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; padding-left: 4px; padding-right: 4px;}
+        
+        /* 增加非今日模式的樣式控制 */
         .header-date { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; height: 64px; gap: 2px; }
-        .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; }
-        .header-date span { font-size: 15px; color: var(--text-sub); font-weight: 600; }
+        .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; transition: color 0.3s; }
+        .header-date span { font-size: 15px; font-weight: 600; transition: color 0.3s; }
+
         .badge-ring { width: 64px; height: 64px; } 
+
         .header-countdown { text-align: right; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; height: 64px; gap: 2px; }
-        .count-num { font-size: 36px; font-weight: 800; color: var(--primary); line-height: 1; letter-spacing: -1px; }
-        .count-label { font-size: 13px; color: var(--text-sub); font-weight: 500; }
+        .count-num { font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -1px; transition: color 0.3s; }
+        .count-label { font-size: 13px; font-weight: 500; transition: color 0.3s; }
+
+        /* 非今日狀態：Header 變淡 */
+        .not-today .header-date h1, 
+        .not-today .header-date span,
+        .not-today .count-num,
+        .not-today .count-label { color: var(--text-light) !important; }
 
         /* === 卡片與任務 === */
         .main-card { background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; }
@@ -53,10 +68,23 @@
         .edit-btn { background: none; border: none; color: #DDD; font-size: 18px; padding: 8px; cursor: pointer; margin-left: auto; }
 
         .quote-area { text-align: center; margin: 20px 0; color: var(--gold); font-family: "Georgia", serif; font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; }
+        
+        /* === 底部導航進化版 === */
         .footer-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 40px; border-top: 1px solid #EEE; padding-top: 20px; }
-        .nav-btn { background: none; border: none; font-size: 16px; color: var(--primary); font-weight: 600; cursor: pointer; }
-        .nav-center { font-size: 14px; color: var(--text-sub); }
+        .nav-btn { background: none; border: none; font-size: 15px; color: var(--primary); font-weight: 800; cursor: pointer; min-width: 70px; }
+        
+        /* 中間標題樣式 */
+        .nav-center-btn { 
+            background: none; border: none; 
+            font-size: 14px; font-weight: 600; 
+            cursor: pointer; padding: 8px 12px;
+            transition: 0.3s;
+        }
+        .is-today-label { color: var(--text-main); cursor: default; }
+        .back-to-today-btn { color: var(--text-light); }
+        .back-to-today-btn:active { color: var(--primary); transform: scale(0.9); }
 
+        /* 拉動更新提示 */
         #pull-indicator { position: absolute; top: -50px; left: 0; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-sub); }
         #loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
         .spinner { width: 40px; height: 40px; border: 4px solid #DDD; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -76,7 +104,7 @@
         </div>
 
         <div id="main-view" class="view">
-            <header>
+            <header id="app-header">
                 <div class="header-date">
                     <h1 id="display-date">--/--</h1>
                     <span id="display-weekday">--</span>
@@ -84,7 +112,9 @@
                 <div class="header-center" id="header-main-goal"></div>
                 <div class="header-countdown" id="header-countdown"></div>
             </header>
+
             <div id="main-goal-card" class="main-card"></div>
+
             <div class="tasks-section">
                 <div class="tasks-header-row">
                     <div class="tasks-header">今日 TOP3</div>
@@ -92,11 +122,13 @@
                 </div>
                 <div id="tasks-list"></div>
             </div>
+
             <div id="daily-quote" class="quote-area"></div>
+
             <div class="footer-nav">
-                <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
-                <span class="nav-center" id="nav-label">今天</span>
-                <button class="nav-btn" onclick="changeDate(1)">明日 ▶</button>
+                <button class="nav-btn" onclick="changeDate(-1)">◀ -1日</button>
+                <button id="nav-center-action" class="nav-center-btn" onclick="goToday()">今 日</button>
+                <button class="nav-btn" onclick="changeDate(1)">+1日 ▶</button>
             </div>
         </div>
     </div>
@@ -104,11 +136,17 @@
     <script>
         const CACHE_KEY_URL = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY_URL);
-        function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+        
+        function getTodayStr() { 
+            const d = new Date(); 
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; 
+        }
         let currentDateStr = getTodayStr();
 
-        // 智慧功能
+        // [智慧更新：喚醒重新整理]
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr); });
+
+        // [手勢功能：下拉更新]
         let startY = 0;
         const scrollContainer = document.getElementById('scroll-container');
         const pullIndicator = document.getElementById('pull-indicator');
@@ -140,8 +178,7 @@
                 await fetch(`${url}?action=getData`);
                 localStorage.setItem(CACHE_KEY_URL, url);
                 currentApiUrl = url;
-                currentDateStr = getTodayStr();
-                loadData(currentDateStr);
+                goToday();
                 showView('main-view');
             } catch (e) { alert("連線失敗"); } finally { showLoading(false); }
         }
@@ -163,14 +200,41 @@
             loadData(currentDateStr);
         }
 
+        function goToday() {
+            currentDateStr = getTodayStr();
+            loadData(currentDateStr);
+        }
+
         function updateDateUI(dateStr) {
             const d = new Date(dateStr);
-            const isToday = d.toDateString() === new Date().toDateString();
-            document.getElementById('nav-label').innerText = isToday ? "今天" : dateStr;
+            const realTodayStr = getTodayStr();
+            const isToday = dateStr === realTodayStr;
+            
+            // 1. 更新底部按鈕狀態
+            const centerBtn = document.getElementById('nav-center-action');
+            if (isToday) {
+                centerBtn.innerText = "今 日";
+                centerBtn.className = "nav-center-btn is-today-label";
+                centerBtn.onclick = null;
+                document.getElementById('app-header').classList.remove('not-today');
+            } else {
+                centerBtn.innerText = "回今日";
+                centerBtn.className = "nav-center-btn back-to-today-btn";
+                centerBtn.onclick = goToday;
+                // 2. 更新 Header 變色狀態 (變淡)
+                document.getElementById('app-header').classList.add('not-today');
+            }
+
+            // 3. 更新表頭文字 (保留您要的空格格式)
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
             const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            // [修改點 1] 星格兩邊加上空格
             document.getElementById('display-weekday').innerText = `( ${days[d.getDay()]} )`;
+            
+            // 4. 設定顏色
+            const countdownNumEl = document.querySelector('.count-num');
+            if (countdownNumEl) {
+                countdownNumEl.style.color = isToday ? 'var(--primary)' : 'var(--text-light)';
+            }
         }
 
         function renderDashboard(data) {
@@ -186,9 +250,9 @@
                 else barGoal = goal;
             });
 
+            // 主徽章渲染 (y="48%" 修正版)
             if (ringGoal) {
                 let percent = ringGoal.total > 0 ? Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100)) : 0;
-                // [修改點 2] y="48%"
                 headerTitleEl.innerHTML = `
                     <svg class="badge-ring" viewBox="0 0 64 64">
                         <circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="#F7FBFF" />
@@ -199,11 +263,29 @@
                         <text x="50%" y="72%" dominant-baseline="middle" text-anchor="middle" font-size="9" font-weight="600" fill="#999">${ringGoal.name.substring(0,4)}</text>
                     </svg>`;
             }
-            if (countdownGoal) { headerCountEl.innerHTML = `<div class="count-num">${countdownGoal.total - countdownGoal.current}</div><div class="count-label">倒數天數</div>`; }
+
+            if (countdownGoal) {
+                const isToday = currentDateStr === getTodayStr();
+                headerCountEl.innerHTML = `
+                    <div class="count-num" style="color: ${isToday ? 'var(--primary)' : 'var(--text-light)'}">
+                        ${countdownGoal.total - countdownGoal.current}
+                    </div>
+                    <div class="count-label">倒數天數</div>
+                `;
+            }
+
             if (barGoal) {
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
-                mainCardEl.innerHTML = `<div class="bar-wrapper"><div class="bar-label"><span>現況</span><span style="color:#4A90E2;">${formatNumber(barGoal.current)} ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: #4A90E2;"></div></div><div class="bar-label"><span>目標</span><span style="color:#C1A258;">${formatNumber(barGoal.total)} ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: #C1A258;"></div></div></div><h3 class="card-title">${barGoal.name}</h3>`;
+                mainCardEl.innerHTML = `
+                    <div class="bar-wrapper">
+                        <div class="bar-label"><span>現況</span><span style="color:#4A90E2;">${formatNumber(barGoal.current)} ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: #4A90E2;"></div></div>
+                        <div class="bar-label"><span>目標</span><span style="color:#C1A258;">${formatNumber(barGoal.total)} ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: #C1A258;"></div></div>
+                    </div>
+                    <h3 class="card-title">${barGoal.name}</h3>`;
             }
+
             const taskList = document.getElementById('tasks-list');
             taskList.innerHTML = '';
             data.tasks.forEach((task, index) => renderTaskItem(task, taskList, index + 1));
