@@ -38,6 +38,11 @@
         .main-card { background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 20px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
+        
+        /* 數值對齊專用樣式 */
+        .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
+        .invisible-decimal { visibility: hidden; }
+
         .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
         .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease-out; }
 
@@ -107,20 +112,28 @@
         function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
         let currentDateStr = getTodayStr();
 
-        // [智慧功能：智慧數值格式化]
-        function smartFormat(val, unit) {
+        // [核心邏輯：隱形對齊智慧格式化]
+        function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
-            // 如果單位是 % 且數值是小數 (如 0.2)，自動轉為 20
-            if (unit === "%" && num > 0 && num < 1) {
-                return (num * 100).toLocaleString(undefined, {maximumFractionDigits: 1});
+            
+            if (unit === "%") {
+                // 智慧轉換 0.2 -> 20
+                if (num > 0 && num < 1) num = num * 100;
+                
+                let fixed = num.toFixed(1); // 格式化為 "38.3" 或 "40.0"
+                if (!isCurrent && fixed.endsWith(".0")) {
+                    // 目標且是整數：顯示 40，並補上透明的 .0
+                    return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
+                }
+                return fixed;
             }
-            // 一般數值處理 (過千變 k)
+            
             if (num >= 1000) return (num/1000).toFixed(1) + 'k';
             return num.toLocaleString();
         }
 
-        // 下拉更新與自動喚醒邏輯 (略，與 v5.7 相同)
+        // 基本 App 邏輯 (省略與 v5.8 同...)
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr); });
         let startY = 0;
         const scrollContainer = document.getElementById('scroll-container');
@@ -151,8 +164,7 @@
             catch (e) { alert("連線失敗"); } finally { showLoading(false); }
         }
         async function loadData(date) {
-            updateDateUI(date);
-            showLoading(true);
+            updateDateUI(date); showLoading(true);
             try {
                 const response = await fetch(`${currentApiUrl}?action=getData&date=${date}`);
                 const json = await response.json();
@@ -197,12 +209,22 @@
             }
             if (barGoal) {
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
-                // [修改點] 這裡使用了 smartFormat 來確保 0.2 變 20
                 mainCardEl.innerHTML = `
                     <div class="bar-wrapper">
-                        <div class="bar-label"><span>現況</span><span style="color:#4A90E2;">${smartFormat(barGoal.current, barGoal.unit)} ${barGoal.unit}</span></div>
+                        <div class="bar-label">
+                            <span>現況</span>
+                            <span style="color:#4A90E2;">
+                                <span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}
+                            </span>
+                        </div>
                         <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: #4A90E2;"></div></div>
-                        <div class="bar-label"><span>目標</span><span style="color:#C1A258;">${smartFormat(barGoal.total, barGoal.unit)} ${barGoal.unit}</span></div>
+                        
+                        <div class="bar-label">
+                            <span>目標</span>
+                            <span style="color:#C1A258;">
+                                <span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}
+                            </span>
+                        </div>
                         <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: #C1A258;"></div></div>
                     </div>
                     <h3 class="card-title">${barGoal.name}</h3>`;
