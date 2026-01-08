@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我的夢想機 Dream Machine</title>
+    <title>我的夢想機 Dream Machine v5.10</title>
     <style>
         :root {
             --primary: #4A90E2; --gold: #C1A258; --bg: #F5F5F7; --card: #FFFFFF;
             --text-main: #1D1D1F; --text-sub: #86868B; --text-light: #C7C7CC;
+            /* v5.10 三色預警配色 */
+            --status-green: #84A59D; --status-amber: #E67E22;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
@@ -23,7 +25,7 @@
         .view { display: none; width: 100%; flex-direction: column; padding: 20px; }
         .view.active { display: flex; }
 
-        /* === Header === */
+        /* === Header (v5.7) === */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; padding-left: 4px; padding-right: 4px;}
         .header-date { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; height: 64px; gap: 2px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; }
@@ -34,18 +36,19 @@
         .count-label { font-size: 13px; font-weight: 500; }
         .not-today .header-date h1, .not-today .header-date span, .not-today .count-num, .not-today .count-label { color: var(--text-light) !important; }
 
-        /* === 卡片與任務 === */
+        /* === 卡片與美學 (v5.9) === */
         .main-card { background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 20px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
         
-        /* 數值對齊專用樣式 */
+        /* 數值對齊專用樣式 (v5.9) */
         .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
         .invisible-decimal { visibility: hidden; }
 
         .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
-        .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease-out; }
+        .bar-chart-fill { height: 100%; border-radius: 5px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
+        /* === 任務區 (v5.7) === */
         .tasks-section { margin-bottom: 10px; flex-grow: 1; }
         .tasks-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
         .tasks-header { font-size: 20px; font-weight: 800; color: var(--text-main); }
@@ -55,16 +58,19 @@
         .task-item.done .task-number { background-color: var(--primary); border-color: var(--primary); color: white; }
         .task-item.done .task-content h4 { text-decoration: line-through; color: #BBB; }
         .task-content h4 { margin: 0; font-size: 16px; font-weight: 600; }
-        .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); }
+        .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); font-style: italic;}
         .edit-btn { background: none; border: none; color: #DDD; font-size: 18px; padding: 8px; cursor: pointer; margin-left: auto; }
 
         .quote-area { text-align: center; margin: 20px 0; color: var(--gold); font-family: "Georgia", serif; font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; }
+        
+        /* === Footer 導航 (v5.7) === */
         .footer-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 40px; border-top: 1px solid #EEE; padding-top: 20px; }
         .nav-btn { background: none; border: none; font-size: 15px; color: var(--primary); font-weight: 800; cursor: pointer; min-width: 70px; }
         .nav-center-btn { background: none; border: none; font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px 12px; transition: 0.3s; }
         .is-today-label { color: var(--text-main); cursor: default; }
         .back-to-today-btn { color: var(--text-light); }
 
+        /* === 載入與下拉效果 (v5.7) === */
         #pull-indicator { position: absolute; top: -50px; left: 0; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-sub); }
         #loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
         .spinner { width: 40px; height: 40px; border: 4px solid #DDD; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -75,11 +81,13 @@
     <div class="app-container" id="scroll-container">
         <div id="pull-indicator">向下移動以更新...</div>
         <div id="loading-overlay"><div class="spinner"></div></div>
+        
         <div id="setup-view" class="view">
             <h1 style="color:var(--primary); margin-bottom: 10px;">Dream Machine</h1>
-            <input type="url" id="api-url-input" placeholder="貼上 API 網址" />
+            <input type="url" id="api-url-input" placeholder="貼上 API 網址" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;"/>
             <button style="background:var(--primary); color:white; border:none; padding:16px; border-radius:12px; width:100%; font-weight:600;" onclick="startApp()">啟動</button>
         </div>
+
         <div id="main-view" class="view">
             <header id="app-header">
                 <div class="header-date">
@@ -89,19 +97,23 @@
                 <div class="header-center" id="header-main-goal"></div>
                 <div class="header-countdown" id="header-countdown"></div>
             </header>
+
             <div id="main-goal-card" class="main-card"></div>
+
             <div class="tasks-section">
                 <div class="tasks-header-row">
-                    <div class="tasks-header">今日 TOP3</div>
+                    <div class="tasks-header">今日任務</div>
                     <button class="add-task-inline" onclick="openAddTask()">+</button>
                 </div>
                 <div id="tasks-list"></div>
             </div>
+
             <div id="daily-quote" class="quote-area"></div>
+
             <div class="footer-nav">
-                <button class="nav-btn" onclick="changeDate(-1)">◀ -1日</button>
+                <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
                 <button id="nav-center-action" class="nav-center-btn" onclick="goToday()">今 日</button>
-                <button class="nav-btn" onclick="changeDate(1)">+1日 ▶</button>
+                <button class="nav-btn" onclick="changeDate(1)">明日 ▶</button>
             </div>
         </div>
     </div>
@@ -112,28 +124,38 @@
         function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
         let currentDateStr = getTodayStr();
 
-        // [核心邏輯：隱形對齊智慧格式化]
+        // [核心邏輯：隱形對齊美學 (v5.9)]
         function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
-            
             if (unit === "%") {
-                // 智慧轉換 0.2 -> 20
                 if (num > 0 && num < 1) num = num * 100;
-                
-                let fixed = num.toFixed(1); // 格式化為 "38.3" 或 "40.0"
+                let fixed = num.toFixed(1);
                 if (!isCurrent && fixed.endsWith(".0")) {
-                    // 目標且是整數：顯示 40，並補上透明的 .0
                     return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
                 }
                 return fixed;
             }
-            
             if (num >= 1000) return (num/1000).toFixed(1) + 'k';
             return num.toLocaleString();
         }
 
-        // 基本 App 邏輯 (省略與 v5.8 同...)
+        // [核心邏輯：三色預警 (v5.10)]
+        function getStatusColor(current, total, direction) {
+            const blue = "#4A90E2"; const green = "#84A59D"; const amber = "#E67E22";
+            if (!total || !direction) return blue;
+            const ratio = current / total;
+            if (direction.includes("向下")) {
+                if (ratio >= 1.25) return amber; // 超過 25% 警示
+                if (ratio <= 0.75) return green; // 低於 25% 優秀
+            } else if (direction.includes("向上")) {
+                if (ratio >= 1.25) return green; // 超過 25% 優秀
+                if (ratio <= 0.75) return amber; // 低於 25% 警示
+            }
+            return blue;
+        }
+
+        // [下拉更新 & 自動喚醒 (v5.7)]
         document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr); });
         let startY = 0;
         const scrollContainer = document.getElementById('scroll-container');
@@ -155,6 +177,7 @@
             }
         });
 
+        // [初始化與啟動]
         function init() { if (currentApiUrl) { showView('main-view'); loadData(currentDateStr); } else { showView('setup-view'); } }
         async function startApp() {
             const url = document.getElementById('api-url-input').value.trim();
@@ -163,6 +186,7 @@
             try { await fetch(`${url}?action=getData`); localStorage.setItem(CACHE_KEY_URL, url); currentApiUrl = url; goToday(); showView('main-view'); } 
             catch (e) { alert("連線失敗"); } finally { showLoading(false); }
         }
+
         async function loadData(date) {
             updateDateUI(date); showLoading(true);
             try {
@@ -171,17 +195,23 @@
                 if (json.status === 'success') renderDashboard(json.data);
             } catch (e) { console.error(e); } finally { showLoading(false); }
         }
+
         function changeDate(delta) {
             const d = new Date(currentDateStr); d.setDate(d.getDate() + delta);
-            currentDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            loadData(currentDateStr);
+            currentDateStr = d.toISOString().split('T')[0]; loadData(currentDateStr);
         }
         function goToday() { currentDateStr = getTodayStr(); loadData(currentDateStr); }
+
         function updateDateUI(dateStr) {
             const d = new Date(dateStr); const realTodayStr = getTodayStr(); const isToday = dateStr === realTodayStr;
             const centerBtn = document.getElementById('nav-center-action');
-            if (isToday) { centerBtn.innerText = "今 日"; centerBtn.className = "nav-center-btn is-today-label"; centerBtn.onclick = null; document.getElementById('app-header').classList.remove('not-today'); } 
-            else { centerBtn.innerText = "回今日"; centerBtn.className = "nav-center-btn back-to-today-btn"; centerBtn.onclick = goToday; document.getElementById('app-header').classList.add('not-today'); }
+            if (isToday) { 
+                centerBtn.innerText = "今 日"; centerBtn.className = "nav-center-btn is-today-label"; centerBtn.onclick = null; 
+                document.getElementById('app-header').classList.remove('not-today');
+            } else { 
+                centerBtn.innerText = "回今日"; centerBtn.className = "nav-center-btn back-to-today-btn"; centerBtn.onclick = goToday; 
+                document.getElementById('app-header').classList.add('not-today');
+            }
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
             const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
             document.getElementById('display-weekday').innerText = `( ${days[d.getDay()]} )`;
@@ -192,12 +222,10 @@
             const headerTitleEl = document.getElementById('header-main-goal');
             const headerCountEl = document.getElementById('header-countdown');
             const mainCardEl = document.getElementById('main-goal-card');
-            let ringGoal = null, barGoal = null, countdownGoal = null;
-            data.goals.forEach(goal => {
-                if (goal.name.includes("倒數") || goal.unit === "天") countdownGoal = goal;
-                else if (goal.type === 'ring') ringGoal = goal;
-                else barGoal = goal;
-            });
+            
+            let ringGoal = data.goals.find(g => g.type === 'ring');
+            let barGoal = data.goals.find(g => g.type === 'bar' || !g.type);
+            let countdownGoal = data.goals.find(g => g.unit === "天");
 
             if (ringGoal) {
                 let percent = ringGoal.total > 0 ? Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100)) : 0;
@@ -209,55 +237,40 @@
             }
             if (barGoal) {
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
+                const activeColor = getStatusColor(barGoal.current, barGoal.total, barGoal.direction);
                 mainCardEl.innerHTML = `
                     <div class="bar-wrapper">
-                        <div class="bar-label">
-                            <span>現況</span>
-                            <span style="color:#4A90E2;">
-                                <span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}
-                            </span>
-                        </div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: #4A90E2;"></div></div>
-                        
-                        <div class="bar-label">
-                            <span>目標</span>
-                            <span style="color:#C1A258;">
-                                <span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}
-                            </span>
-                        </div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: #C1A258;"></div></div>
+                        <div class="bar-label"><span>現況</span><span style="color:${activeColor}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: ${activeColor};"></div></div>
+                        <div class="bar-label"><span>目標</span><span style="color:var(--gold);"><span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: var(--gold);"></div></div>
                     </div>
                     <h3 class="card-title">${barGoal.name}</h3>`;
             }
             const taskList = document.getElementById('tasks-list');
             taskList.innerHTML = '';
-            data.tasks.forEach((task, index) => renderTaskItem(task, taskList, index + 1));
+            data.tasks.forEach((t, i) => {
+                const item = document.createElement('div');
+                item.className = `task-item ${t.isDone ? 'done' : ''}`;
+                item.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleTask(t.name, !t.isDone); };
+                item.innerHTML = `<div class="task-number">${t.isDone?'✔':i+1}</div><div class="task-content"><h4>${t.name}</h4><p>${t.note||''}</p></div><button class="edit-btn" onclick="event.stopPropagation(); editNote('${t.name}', '${t.note||''}')">✎</button>`;
+                taskList.appendChild(item);
+            });
         }
 
-        function renderTaskItem(task, container, index) {
-            const item = document.createElement('div');
-            item.className = `task-item ${task.isDone ? 'done' : ''}`;
-            item.onclick = (e) => { if(e.target.tagName === 'BUTTON') return; toggleTask(item, task.name, !item.classList.contains('done')); };
-            const marker = index <= 3 ? index : '•';
-            item.innerHTML = `<div class="task-number">${task.isDone ? '✔' : marker}</div><div class="task-content"><h4>${task.name}</h4><p id="note-${task.name}">${task.note || ''}</p></div><button class="edit-btn" onclick="editNote(event, '${task.name}', '${task.note || ''}')">✎</button>`;
-            container.appendChild(item);
+        async function toggleTask(name, status) {
+            await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&isDone=${status}`);
+            loadData(currentDateStr);
+        }
+        async function editNote(name, old) {
+            const note = prompt("輸入備註：", old); if (note === null) return;
+            await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
+            loadData(currentDateStr);
         }
         async function openAddTask() {
-            const name = prompt("新增任務名稱："); if (!name) return;
-            renderTaskItem({ name, isDone: false }, document.getElementById('tasks-list'), document.querySelectorAll('.task-item').length + 1);
-            try { await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}`); } catch (e) {}
-        }
-        async function editNote(e, name, old) {
-            e.stopPropagation(); const note = prompt("輸入備註：", old); if (note === null) return;
-            document.getElementById(`note-${name}`).innerText = note;
-            try { await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`); } catch (e) {}
-        }
-        function toggleTask(el, name, status) {
-            if (status) el.classList.add('done'); else el.classList.remove('done');
-            const numEl = el.querySelector('.task-number');
-            if (status) numEl.innerText = '✔';
-            else { const items = Array.from(document.querySelectorAll('.task-item')); const idx = items.indexOf(el) + 1; numEl.innerText = idx <= 3 ? idx : '•'; }
-            fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&isDone=${status}`);
+            const name = prompt("任務名稱："); if (!name) return;
+            await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}`);
+            loadData(currentDateStr);
         }
         function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? 'flex' : 'none'; }
