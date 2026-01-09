@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dream Machine OS v6.5 Glass</title>
+    <title>Dream Machine OS v7.0 Gold Galaxy</title>
     <style>
         /* =========================================
            1. 核心配色與系統變數
@@ -17,7 +17,8 @@
             --text-main: #1D1D1F;  /* 主要文字 */
             --text-sub: #86868B;   /* 次要文字 */
             --text-light: #D1D1D6; /* 淡色裝飾 */
-            --alloy-glow: rgba(74, 144, 226, 0.4); /* 基礎光暈 */
+            --alloy-glow: rgba(74, 144, 226, 0.4); /* 預設光暈 (藍) */
+            --gold-glow: rgba(193, 162, 88, 0.4);  /* [NEW] 金色光暈 */
         }
 
         /* =========================================
@@ -75,50 +76,28 @@
         .nav-card:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .nav-label { font-size: 14px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* M_Goal 大圓環 */
         .m-goal-container { display: flex; justify-content: center; align-items: center; padding: 10px 0; min-height: 140px; }
         .big-ring { width: 140px; height: 140px; }
 
-        /* --- [升級] 能力星系預覽區塊 (極簡玻璃質感 + 呼吸) --- */
-        #home-ability-preview {
-            display: flex;
-            gap: 16px; /* 稍微拉寬間距 */
-            justify-content: center;
-            align-items: flex-end; /* 底部對齊，讓中間浮起時更明顯 */
-            margin-top: 20px; 
-            min-height: 50px;
-            padding-bottom: 5px;
+        /* 首頁預覽區塊 */
+        #home-ability-preview { display: flex; gap: 16px; justify-content: center; align-items: flex-end; margin-top: 20px; min-height: 50px; padding-bottom: 5px; }
+        
+        /* 首頁小球：使用金色樣式 */
+        .ability-orb { 
+            border-radius: 50%; position: relative; 
+            background: rgba(255, 255, 255, 0.4); 
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); 
+            /* 改為金色邊框 */
+            border: 1.5px solid rgba(193, 162, 88, 0.3); 
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            animation: breathe-glow-gold 4s infinite ease-in-out; 
         }
-
-        .ability-orb {
-            border-radius: 50%;
-            position: relative;
-            
-            /* 極簡核心：類玻璃質感背景 */
-            background: rgba(255, 255, 255, 0.4); /* 半透明白 */
-            backdrop-filter: blur(4px);            /* 毛玻璃效果 */
-            -webkit-backdrop-filter: blur(4px);    /* Safari 支援 */
-            
-            /* 邊框：細緻且帶透明度 */
-            border: 1.5px solid rgba(74, 144, 226, 0.3); 
-            
-            /* 動畫：只做光影呼吸，不改變位置 */
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            animation: breathe-glow 4s infinite ease-in-out;
+        
+        /* 首頁金色呼吸動畫 */
+        @keyframes breathe-glow-gold { 
+            0%, 100% { box-shadow: 0 4px 10px rgba(193, 162, 88, 0.1); border-color: rgba(193, 162, 88, 0.3); } 
+            50% { box-shadow: 0 4px 20px rgba(193, 162, 88, 0.3); border-color: rgba(193, 162, 88, 0.6); } 
         }
-
-        /* 呼吸動畫：改變陰影與邊框濃度 */
-        @keyframes breathe-glow {
-            0%, 100% { 
-                box-shadow: 0 4px 10px rgba(74, 144, 226, 0.1); 
-                border-color: rgba(74, 144, 226, 0.3);
-            }
-            50% { 
-                box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3); 
-                border-color: rgba(74, 144, 226, 0.6);
-            }
-        }
-        /* --- [END UPGRADE] --- */
 
         /* =========================================
            4. 每日頁面 (Daily)
@@ -126,72 +105,39 @@
         .daily-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 4px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; color: var(--text-main); }
         .header-date span { font-size: 15px; font-weight: 600; color: var(--text-main); }
-        
         .header-countdown { text-align: right; }
         .count-num { font-size: 36px; font-weight: 800; line-height: 1; color: var(--primary); letter-spacing: -1px; }
         .count-label { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
         .badge-ring { width: 64px; height: 64px; }
 
-        .main-card { 
-            background: var(--card); border-radius: 20px; 
-            padding: 16px 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
-            margin-bottom: 16px; 
-            text-align: center;
-        }
+        .main-card { background: var(--card); border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 16px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
-        
         .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
         .invisible-decimal { visibility: hidden; } 
-        
         .bar-chart-bg { width: 100%; background: #F0F0F5; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
         .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s; }
 
         .tasks-section { margin-top: 10px; }
         .tasks-header-row { display: flex; align-items: center; margin-bottom: 18px; padding: 0 4px; }
         .tasks-header { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
-        
-        .workload-badge { 
-            width: 24px; height: 24px; background: #E5E5EA; color: var(--text-sub); 
-            font-size: 12px; font-weight: 800; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; 
-        }
-        
-        .add-btn { 
-            width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; 
-            border: none; font-size: 24px; font-weight: bold; margin-left: auto; cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(74,144,226,0.4); transition: transform 0.2s; 
-            display: flex; align-items: center; justify-content: center; padding-bottom: 4px;
-        }
+        .workload-badge { width: 24px; height: 24px; background: #E5E5EA; color: var(--text-sub); font-size: 12px; font-weight: 800; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .add-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; font-weight: bold; margin-left: auto; cursor: pointer; box-shadow: 0 4px 12px rgba(74,144,226,0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; }
         .add-btn:active { transform: scale(0.9); }
 
-        .task-item { 
-            background: var(--card); border-radius: 18px; padding: 18px; margin-bottom: 12px; 
-            display: flex; align-items: flex-start; box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid transparent;
-        }
+        .task-item { background: var(--card); border-radius: 18px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid transparent; }
         .task-item:active { transform: scale(0.99); background: #FAFAFA; }
         .task-item.syncing { opacity: 0.6; pointer-events: none; filter: grayscale(80%); transform: scale(0.98); } 
-
-        .task-checkbox { 
-            width: 24px; height: 24px; border: 2.5px solid #E5E5EA; border-radius: 50%; 
-            margin-right: 14px; flex-shrink: 0; margin-top: 2px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 12px; font-weight: 800; color: var(--text-sub); transition: 0.3s; 
-        }
+        .task-checkbox { width: 24px; height: 24px; border: 2.5px solid #E5E5EA; border-radius: 50%; margin-right: 14px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--text-sub); transition: 0.3s; }
         .task-item.done .task-checkbox { background-color: var(--primary); border-color: var(--primary); color: white; transform: scale(1.1); }
         .task-item.done .task-checkbox::after { content: '✔'; font-size: 14px; }
         .task-item.done .task-checkbox span { display: none; }
         .task-item.done h4 { text-decoration: line-through; color: #C7C7CC; }
-        
         .task-content { flex-grow: 1; }
         .task-content h4 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; color: var(--text-main); transition: 0.3s; }
         .task-content p { margin: 5px 0 0 0; font-size: 13px; color: var(--text-sub); font-style: italic; }
-        
         .edit-btn { background: none; border: none; color: #D1D1D6; font-size: 18px; padding: 8px; cursor: pointer; transition: 0.2s; opacity: 0.6; margin-left: auto; align-self: center; }
         .edit-btn:active { color: var(--primary); opacity: 1; transform: scale(1.2); }
-
         .extra-tasks-container { overflow: hidden; transition: max-height 0.4s ease-out; max-height: 0; border-top: 1px dashed transparent; margin-top: 0; }
         .extra-tasks-container.expanded { max-height: 1200px; border-top-color: #EEE; margin-top: 10px; padding-top: 10px; }
 
@@ -202,17 +148,120 @@
         .breathe-btn:active { transform: scale(0.95); }
 
         /* =========================================
-           5. 能力星系與頁尾
+           5. [重構] 能力星系 (Galaxy Layout) - Gold Edition
            ========================================= */
-        .galaxy-container { display: flex; flex-direction: column; gap: 30px; align-items: center; padding: 30px 0; }
-        .alloy-section { display: flex; justify-content: center; gap: 20px; width: 100%; flex-wrap: wrap; }
-        .alloy-node { width: 100px; height: 100px; border-radius: 50%; background: var(--card); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 3px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.08); transition: 0.5s; }
-        .alloy-halo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; opacity: 0.5; z-index: 1; transition: 0.5s; mix-blend-mode: multiply; }
-        .alloy-content { z-index: 2; text-align: center; }
         
-        .star-section { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; max-width: 340px; }
-        .star-node { width: 50px; height: 50px; border-radius: 50%; background: #F8FAFC; color: var(--primary); border: 1.5px solid #E1E8F0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .star-node.empty { border: 1.5px dashed #DDD; background: none; color: transparent; }
+        #galaxy-stage {
+            position: relative;
+            width: 100%;
+            height: 440px; 
+            margin-top: 10px;
+        }
+
+        .galaxy-node {
+            position: absolute;
+            border-radius: 50%;
+            
+            /* 玻璃質感 */
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px);
+            
+            /* 內容置中 */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 核心合金特定樣式 [改為金色] */
+        .alloy-node-style { 
+            width: 100px; 
+            height: 100px; 
+            z-index: 10;
+            
+            /* 金色邊框 */
+            border: 2px solid rgba(193, 162, 88, 0.3); 
+            
+            /* 金色呼吸動畫 */
+            animation: breathe-glow-gold 5s infinite ease-in-out;
+        }
+        
+        .alloy-content h4 { 
+            margin: 0; 
+            font-size: 16px; 
+            font-weight: 800; 
+            color: var(--text-main); 
+        }
+        
+        .alloy-content span { 
+            font-size: 11px; 
+            color: var(--text-sub); 
+            font-weight: 600; 
+            margin-top: 2px; 
+            display: block; 
+        }
+
+        /* 輔助星星特定樣式 [維持藍色] */
+        .star-node-style {
+            width: 50px; 
+            height: 50px; 
+            z-index: 5;
+            color: var(--primary); 
+            font-size: 12px; 
+            font-weight: 700;
+            
+            /* 藍色邊框與動畫 */
+            border: 1.5px solid rgba(74, 144, 226, 0.3);
+            background: rgba(255, 255, 255, 0.6);
+            animation: breathe-glow 5s infinite ease-in-out;
+        }
+        
+        /* 藍色呼吸 */
+        @keyframes breathe-glow { 
+            0%, 100% { box-shadow: 0 4px 10px rgba(74, 144, 226, 0.1); border-color: rgba(74, 144, 226, 0.3); } 
+            50% { box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3); border-color: rgba(74, 144, 226, 0.6); } 
+        }
+
+        .star-node-style.empty {
+            border: 1.5px dashed #D1D1D6; 
+            background: rgba(255,255,255,0.2); 
+            color: transparent; 
+            box-shadow: none; 
+            animation: none;
+        }
+
+        /* 底部增強控制台 */
+        .enhancement-pad {
+            position: relative; 
+            z-index: 20;
+            margin-top: -40px; 
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px; 
+            padding: 20px; 
+            text-align: center;
+            width: 92%; 
+            max-width: 380px; 
+            align-self: center;
+            box-shadow: 0 8px 32px rgba(74, 144, 226, 0.15);
+        }
+        
+        .pad-title { font-size: 14px; color: var(--text-sub); font-weight: 600; margin-bottom: 10px; }
+        .selected-ability-info { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 15px; }
+        
+        .invest-btn {
+            background: linear-gradient(135deg, var(--primary), #6EB4F7);
+            color: white; border: none; padding: 12px 40px; border-radius: 30px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4); transition: 0.2s;
+        }
+        .invest-btn:active { transform: scale(0.96); }
 
         .quote-area { text-align: center; margin: 10px 0 10px 0; color: var(--gold); font-style: italic; font-weight: 600; font-size: 14px; padding: 0 10px; line-height: 1.4; }
         .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 10px 30px 10px; border-top: 1px solid #EEE; margin-top: 0; }
@@ -242,13 +291,13 @@
                 <button class="rhythm-btn" data-mode="walk" onclick="setRhythm('walk')">🚶 漫步</button>
                 <button class="rhythm-btn" data-mode="breathe" onclick="setRhythm('breathe')">☕ 呼吸</button>
             </div>
-
+            
             <div class="nav-card" onclick="switchView('daily')">
                 <div class="nav-label">12週挑戰進度</div>
                 <div style="display:flex; justify-content:center;" id="home-m-goal-ring"><span style="color:#CCC; font-size:12px;">載入中...</span></div>
                 <div style="text-align:center; font-size:13px; color:var(--text-sub); margin-top:12px; font-weight:500;">點擊進入執行清單 &rarr;</div>
             </div>
-
+            
             <div class="nav-card" onclick="switchView('ability')">
                 <div class="nav-label">能力星系</div>
                 <div id="home-ability-preview"></div>
@@ -256,7 +305,7 @@
             </div>
             
             <div id="home-quote" style="text-align:center; color:var(--gold); font-size:14px; margin-top:30px; font-style:italic; font-weight:600;"></div>
-            <div style="text-align:center; margin-top:auto; padding-bottom:20px; font-size:12px; color:#E0E0E0; font-weight:700; letter-spacing:2px;">iTree OS v6.5</div>
+            <div style="text-align:center; margin-top:auto; padding-bottom:20px; font-size:12px; color:#E0E0E0; font-weight:700; letter-spacing:2px;">iTree OS v7.0</div>
         </div>
 
         <div id="view-daily" class="view-section">
@@ -279,9 +328,7 @@
                 
                 <div class="tasks-section">
                     <div class="tasks-header-row">
-                        <div class="tasks-header">
-                            今日任務 <span id="workload-badge" class="workload-badge" style="display:none;" onclick="toggleExpand()">0</span>
-                        </div>
+                        <div class="tasks-header">今日任務 <span id="workload-badge" class="workload-badge" style="display:none;" onclick="toggleExpand()">0</span></div>
                         <button class="add-btn" onclick="openAddTask()">+</button>
                     </div>
                     <div id="top-tasks-list"></div>
@@ -290,8 +337,9 @@
                     </div>
                 </div>
             </div>
-
+            
             <div id="daily-quote" class="quote-area"></div>
+            
             <div class="footer-nav">
                 <button class="nav-btn" onclick="changeDate(-1)">-1 日</button>
                 <button id="nav-center-action" class="nav-center-btn" onclick="goToday()">今 日</button>
@@ -299,22 +347,30 @@
             </div>
         </div>
 
-        <div id="view-ability" class="view-section">
+        <div id="view-ability" class="view-section" style="padding-bottom: 0;"> 
             <div class="back-nav" onclick="switchView('home')"><span>&#8249;</span> 回首頁</div>
-            <div style="text-align:center; margin-bottom:30px;">
+            
+            <div style="text-align:center; margin-bottom:10px;">
                 <h2 style="margin:0; font-size:26px; font-weight:800;">能力星系</h2>
                 <span style="font-size:13px; color:var(--text-sub); display:block; margin-top:6px;">投入代幣，點亮光環</span>
+                <div id="ability-token-display" style="font-size:12px; font-weight:600; color:var(--primary); margin-top:8px; opacity:0.8;">持有代幣: 1,250 (範例)</div>
             </div>
-            <div class="galaxy-container">
-                <div class="alloy-section" id="alloy-list"></div>
-                <div class="star-section" id="star-list"></div>
+            
+            <div class="galaxy-container" style="flex-grow: 1;"> 
+                <div id="galaxy-stage"></div>
+            </div>
+
+            <div class="enhancement-pad">
+                <div class="pad-title">能力增強控制台</div>
+                <div class="selected-ability-info">選擇一個能力核心</div>
+                <button class="invest-btn">長按投入代幣</button>
             </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // JavaScript 核心引擎 v6.5
+        // JavaScript 核心引擎 v7.0
         // ==========================================
         const CACHE_KEY = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY);
@@ -324,13 +380,35 @@
         let syncingTaskNames = new Set();
         let isExpanded = false;
 
+        // --- [FIX] v6.9 Final Polish 座標 ---
+        
+        // 核心合金 (三角引力場)
+        const alloySlots = [
+            'top: 5%; left: 50%; transform: translateX(-50%);', // 頂點核心
+            'top: 40%; left: 24%;',  // 左下核心 (邏輯能力) - 已修正
+            'top: 50%; right: 18%;'  // 右下核心 (學習能力)
+        ];
+        
+        // 輔助星星 (環繞軌道)
+        const starSlots = [
+            'top: 8%; left: 10%; scale: 0.85;',     // 左上
+            'top: 15%; right: 5%; scale: 0.8;',     // 右上
+            'top: 22%; left: 22%; scale: 0.8;',     // 左側 (應用) - 已修正
+            'top: 28%; right: 30%; scale: 0.9;',    // 右側內
+            'top: 70%; left: 38%; scale: 0.85;',    // 下中
+            'top: 60%; left: 5%; scale: 0.75;',     // 左下遠
+            'top: 65%; right: 5%; scale: 0.8;'      // 右下遠
+        ];
+
         function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
             if (unit === "%") {
                 if (num > 0 && num < 1) num *= 100;
                 let fixed = num.toFixed(1);
-                if (!isCurrent && fixed.endsWith(".0")) return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
+                if (!isCurrent && fixed.endsWith(".0")) {
+                    return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
+                }
                 return fixed;
             }
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString();
@@ -340,8 +418,12 @@
             const blue = "#4A90E2", green = "#84A59D", amber = "#E67E22";
             if (!total || !direction) return blue;
             const ratio = current / total;
-            if (direction.includes("向下")) { return ratio >= 1.25 ? amber : (ratio <= 0.75 ? green : blue); } 
-            else if (direction.includes("向上")) { return ratio >= 1.25 ? green : (ratio <= 0.75 ? amber : blue); }
+            
+            if (direction.includes("向下")) { 
+                return ratio >= 1.25 ? amber : (ratio <= 0.75 ? green : blue); 
+            } else if (direction.includes("向上")) { 
+                return ratio >= 1.25 ? green : (ratio <= 0.75 ? amber : blue); 
+            }
             return blue;
         }
 
@@ -350,11 +432,18 @@
         function init() {
             setRhythm(currentRhythm);
             const d = new Date();
-            document.getElementById('home-date').innerText = `${d.getMonth()+1}月${d.getDate()}日 (${['日','一','二','三','四','五','六'][d.getDay()]})`;
-            if (currentApiUrl) loadData(currentDateStr);
-            else {
+            document.getElementById('home-date').innerText = 
+                `${d.getMonth()+1}月${d.getDate()}日 (${['日','一','二','三','四','五','六'][d.getDay()]})`;
+            
+            if (currentApiUrl) {
+                loadData(currentDateStr);
+            } else {
                  let u = prompt("請輸入 API 網址：");
-                 if(u && u.includes('script.google.com')) { currentApiUrl = u; localStorage.setItem(CACHE_KEY, u); loadData(currentDateStr); }
+                 if(u && u.includes('script.google.com')) { 
+                     currentApiUrl = u; 
+                     localStorage.setItem(CACHE_KEY, u); 
+                     loadData(currentDateStr); 
+                 }
             }
         }
 
@@ -362,7 +451,7 @@
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${view}`).classList.add('active');
             if(view === 'daily') {
-                loadData(currentDateStr);
+                loadData(currentDateStr); 
                 window.scrollTo(0,0);
             }
         }
@@ -375,18 +464,30 @@
         }
 
         function changeDate(n) { 
-            const d = new Date(currentDateStr); d.setDate(d.getDate()+n); 
-            currentDateStr = d.toISOString().split('T')[0]; loadData(currentDateStr); 
+            const d = new Date(currentDateStr); 
+            d.setDate(d.getDate()+n); 
+            currentDateStr = d.toISOString().split('T')[0]; 
+            loadData(currentDateStr); 
         }
+        
         function goToday() { 
-            currentDateStr = new Date().toISOString().split('T')[0]; loadData(currentDateStr); 
+            currentDateStr = new Date().toISOString().split('T')[0]; 
+            loadData(currentDateStr); 
         }
+        
         function toggleExpand() {
             isExpanded = !isExpanded;
             const c = document.getElementById('extra-tasks-container');
             const b = document.getElementById('workload-badge');
-            if(isExpanded) { c.classList.add('expanded'); b.style.background='var(--primary)'; b.style.color='white'; }
-            else { c.classList.remove('expanded'); b.style.background='#E5E5EA'; b.style.color='var(--text-sub)'; }
+            if(isExpanded) { 
+                c.classList.add('expanded'); 
+                b.style.background='var(--primary)'; 
+                b.style.color='white'; 
+            } else { 
+                c.classList.remove('expanded'); 
+                b.style.background='#E5E5EA'; 
+                b.style.color='var(--text-sub)'; 
+            }
         }
 
         async function loadData(date, silent=false) {
@@ -409,68 +510,62 @@
             renderAbility(data);
         }
 
-        // --- Render: Home (升級版：玻璃質感與柔光) ---
         function renderHome(data) {
             const mGoal = data.goals.find(g => g.tag === 'M_Goal');
             const ringContainer = document.getElementById('home-m-goal-ring');
+            
             if(mGoal) {
                 let p = Math.round((mGoal.current/mGoal.total)*100);
                 ringContainer.innerHTML = `<svg class="big-ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" stroke="#E5E5EA" stroke-width="8" fill="none"/><circle cx="50" cy="50" r="45" stroke="#4A90E2" stroke-width="8" fill="none" stroke-dasharray="283" style="stroke-dashoffset:${283*(1-p/100)}" transform="rotate(-90 50 50)"/><text x="50" y="55" text-anchor="middle" font-size="20" font-weight="800" fill="#4A90E2">${p}%</text></svg>`;
-            } else { ringContainer.innerHTML = `<span style="color:#CCC; font-size:12px;">未設定 M_Goal</span>`; }
+            } else { 
+                ringContainer.innerHTML = `<span style="color:#CCC; font-size:12px;">未設定 M_Goal</span>`; 
+            }
 
-            // [NEW] 升級版：能力星系 (極簡 + 玻璃光效 + 三角浮動)
             const prev = document.getElementById('home-ability-preview'); 
             prev.innerHTML = '';
             const activeAlloys = data.abilities.filter(a => a.type === 'Alloy' && a.isActive).slice(0, 3);
-
+            
             if (activeAlloys.length === 0) {
-                // 空狀態：顯示 3 個半透明灰色小球
-                prev.innerHTML = `
-                    <div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div>
-                    <div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div>
-                    <div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div>`;
+                prev.innerHTML = `<div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div><div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div><div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div>`;
             } else {
                 activeAlloys.forEach((a, index) => {
-                    // 動態大小：Level 越大，球越大 (基礎 22px)
                     const size = Math.min(22 + (a.level * 3), 48);
-                    
-                    // 動態光暈：Tokens 越多，範圍越廣
-                    const glow = Math.min(a.tokens, 40); 
-                    
-                    // 三角浮動：中間那顆 (index 1) 往上抬
+                    const glow = Math.min(a.tokens, 40);
                     const lift = (index === 1 && activeAlloys.length === 3) ? 'translateY(-10px)' : 'translateY(0)';
-
+                    
                     const div = document.createElement('div');
                     div.className = 'ability-orb';
                     div.style.width = `${size}px`;
                     div.style.height = `${size}px`;
-                    div.style.transform = lift; // JS 控制位置
-
-                    // JS 控制光暈強度 (使用 rgba 確保柔和)
-                    // 注意：這裡只設定初始值，呼吸動畫會在 CSS 裡自動運作
-                    div.style.boxShadow = `0 4px ${15 + glow}px rgba(74, 144, 226, ${0.2 + (a.tokens/100)})`;
-
+                    div.style.transform = lift;
+                    // [Gold] 首頁使用金色光暈
+                    div.style.boxShadow = `0 4px ${15 + glow}px rgba(193, 162, 88, ${0.2 + (a.tokens/100)})`;
+                    
                     prev.appendChild(div);
                 });
             }
         }
 
-        // --- Render: Daily ---
         function renderDaily(data) {
             const wrapper = document.getElementById('daily-content-wrapper');
             const breathe = document.getElementById('breathe-mode-container');
             
             document.getElementById('daily-quote').innerText = data.quote || "";
+            
             const d = new Date(currentDateStr);
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
             document.getElementById('display-weekday').innerText = `(${['日','一','二','三','四','五','六'][d.getDay()]})`;
+            
             const ist = currentDateStr === new Date().toISOString().split('T')[0];
             document.getElementById('nav-center-action').className = ist ? 'nav-center-btn is-today-label' : 'nav-center-btn';
 
             if (currentRhythm === 'breathe') {
-                wrapper.style.display = 'none'; breathe.style.display = 'block'; return;
+                wrapper.style.display = 'none'; 
+                breathe.style.display = 'block'; 
+                return;
             }
-            wrapper.style.display = 'block'; breathe.style.display = 'none';
+            wrapper.style.display = 'block'; 
+            breathe.style.display = 'none';
 
             const cdGoal = data.goals.find(g => g.unit === '天');
             const rGoal = data.goals.find(g => g.type === 'ring');
@@ -499,53 +594,121 @@
             const badge = document.getElementById('workload-badge');
             topList.innerHTML = ''; extraList.innerHTML = '';
 
-            if (data.tasks.length > 3) { badge.style.display = 'flex'; badge.innerText = data.tasks.length; }
-            else { badge.style.display = 'none'; isExpanded = false; document.getElementById('extra-tasks-container').classList.remove('expanded'); }
+            if (data.tasks.length > 3) {
+                badge.style.display = 'flex'; 
+                badge.innerText = data.tasks.length; 
+            } else {
+                badge.style.display = 'none'; 
+                isExpanded = false; 
+                document.getElementById('extra-tasks-container').classList.remove('expanded'); 
+            }
 
             data.tasks.forEach((t, i) => {
                 const div = document.createElement('div');
                 div.className = `task-item ${t.isDone?'done':''} ${syncingTaskNames.has(t.name)?'syncing':''}`;
+                
                 div.onclick = (e) => {
                     if(e.target.tagName!=='BUTTON' && !syncingTaskNames.has(t.name)){
                         if(navigator.vibrate) navigator.vibrate(10);
-                        div.classList.toggle('done'); div.classList.add('syncing');
-                        syncingTaskNames.add(t.name); toggleTask(t.name, !t.isDone);
+                        div.classList.toggle('done'); 
+                        div.classList.add('syncing');
+                        syncingTaskNames.add(t.name); 
+                        toggleTask(t.name, !t.isDone);
                     }
                 };
+                
                 const cbContent = (i < 3) ? `<span>${i+1}</span>` : ""; 
                 div.innerHTML = `<div class="task-checkbox">${cbContent}</div><div class="task-content"><h4>${t.name}</h4><p>${t.note||''}</p></div><button class="edit-btn" onclick="event.stopPropagation();editNote('${t.name}','${t.note||''}')">✎</button>`;
+                
                 if (i < 3) topList.appendChild(div); else extraList.appendChild(div);
             });
         }
 
         function renderAbility(data) {
-            const al = document.getElementById('alloy-list'); const sl = document.getElementById('star-list');
-            al.innerHTML=''; sl.innerHTML='';
+            const stage = document.getElementById('galaxy-stage');
+            stage.innerHTML = ''; 
+
+            let alloyCount = 0;
+            let starCount = 0;
+
             data.abilities.forEach(a => {
-                if(!a.isActive) { if(a.type==='Star') sl.innerHTML+=`<div class="star-node empty">?</div>`; return; }
-                if(a.type==='Alloy') {
-                    const glow = Math.min(25, a.tokens/4);
-                    al.innerHTML += `<div class="alloy-node"><div class="alloy-halo" style="box-shadow:0 0 ${glow}px 4px var(--primary)"></div><div class="alloy-content"><h4>${a.name}</h4><span style="font-size:10px;color:#888">LV.${a.level}</span></div></div>`;
-                } else {
-                    sl.innerHTML += `<div class="star-node active">${a.name.substring(0,2)}</div>`;
+                if (a.type === 'Alloy' && alloyCount < alloySlots.length) {
+                    const glow = Math.min(a.tokens, 50);
+                    // [Gold] 內頁核心也使用金色
+                    const shadowColor = `rgba(193, 162, 88, ${0.3 + (a.tokens/100)})`;
+                    
+                    stage.innerHTML += `
+                        <div class="galaxy-node alloy-node-style" style="${alloySlots[alloyCount]} box-shadow: 0 4px ${15+glow}px ${shadowColor};">
+                            <div class="alloy-content">
+                                <h4>${a.name}</h4>
+                                <span>LV.${a.level}</span>
+                            </div>
+                        </div>`;
+                    alloyCount++;
+                
+                } else if (a.type === 'Star' && starCount < starSlots.length) {
+                    const styleClass = a.isActive ? 'star-node-style' : 'star-node-style empty';
+                    const content = a.isActive ? a.name.substring(0,2) : '';
+                    
+                    stage.innerHTML += `<div class="galaxy-node ${styleClass}" style="${starSlots[starCount]}">${content}</div>`;
+                    starCount++;
                 }
             });
         }
 
-        async function toggleTask(n, s) { await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`); setTimeout(()=>{syncingTaskNames.delete(n); loadData(currentDateStr, true);},500); }
-        async function editNote(n, o) { const v=prompt("編輯備註:",o); if(v!==null) { await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&note=${encodeURIComponent(v)}`); loadData(currentDateStr); } }
-        async function openAddTask() { const v=prompt("新增任務:"); if(v) { await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(v)}`); loadData(currentDateStr); } }
-        async function saveBreatheThought() { const i=document.getElementById('breathe-input'); if(i.value){ await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent("[呼吸日記] "+i.value)}`); i.value=''; loadData(currentDateStr); alert("想法已收藏"); } }
+        async function toggleTask(n, s) { 
+            await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`); 
+            setTimeout(()=>{
+                syncingTaskNames.delete(n); 
+                loadData(currentDateStr, true);
+            },500); 
+        }
+
+        async function editNote(n, o) { 
+            const v = prompt("編輯備註:", o); 
+            if(v !== null) { 
+                await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&note=${encodeURIComponent(v)}`); 
+                loadData(currentDateStr); 
+            } 
+        }
+
+        async function openAddTask() { 
+            const v = prompt("新增任務:"); 
+            if(v) { 
+                await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(v)}`); 
+                loadData(currentDateStr); 
+            } 
+        }
+
+        async function saveBreatheThought() { 
+            const i = document.getElementById('breathe-input'); 
+            if(i.value){ 
+                await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent("[呼吸日記] "+i.value)}`); 
+                i.value=''; 
+                loadData(currentDateStr); 
+                alert("想法已收藏"); 
+            } 
+        }
         
-        let startY=0; const sc=document.getElementById('scroll-container'); const pi=document.getElementById('pull-indicator');
-        sc.addEventListener('touchstart', e=>{startY=e.touches[0].pageY});
-        sc.addEventListener('touchmove', e=>{
-            const dist=e.touches[0].pageY-startY;
-            if(sc.scrollTop===0 && dist>0) { sc.style.transform=`translateY(${Math.min(dist/2,60)}px)`; pi.innerText=dist>100?"放開更新":"下拉..."; }
+        let startY = 0; 
+        const sc = document.getElementById('scroll-container'); 
+        const pi = document.getElementById('pull-indicator');
+        
+        sc.addEventListener('touchstart', e => { startY = e.touches[0].pageY });
+        
+        sc.addEventListener('touchmove', e => {
+            const dist = e.touches[0].pageY - startY;
+            if(sc.scrollTop === 0 && dist > 0) { 
+                sc.style.transform = `translateY(${Math.min(dist/2, 60)}px)`; 
+                pi.innerText = dist > 100 ? "放開更新" : "下拉..."; 
+            }
         });
-        sc.addEventListener('touchend', ()=>{
-             if(new WebKitCSSMatrix(getComputedStyle(sc).transform).m42>50) loadData(currentDateStr);
-             sc.style.transform='translateY(0)';
+        
+        sc.addEventListener('touchend', () => {
+             if(new WebKitCSSMatrix(getComputedStyle(sc).transform).m42 > 50) {
+                 loadData(currentDateStr);
+             }
+             sc.style.transform = 'translateY(0)';
         });
     </script>
 </body>
