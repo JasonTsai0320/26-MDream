@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dream Machine OS v8.2 Header Fix</title>
+    <title>Dream Machine OS v9.2 Aesthetic Full</title>
     <style>
         /* =========================================
-           1. 核心配色與系統變數 (完整保留)
+           1. 核心配色與系統變數 (Aesthetic Variables)
            ========================================= */
         :root {
             --primary: #4A90E2;    /* 專業藍 */
@@ -15,27 +15,27 @@
             --bg: #F5F5F7;         /* 蘋果灰底 */
             --card: #FFFFFF;       /* 純白卡片 */
             --text-main: #1D1D1F;  /* 主要文字 */
-            --text-sub: #86868B;   /* 次要文字 (序號加深) */
+            --text-sub: #86868B;   /* 次要文字 */
             --text-light: #D1D1D6; /* 淡色裝飾 */
             --alloy-glow: rgba(74, 144, 226, 0.4); /* 基礎光暈 */
             --gold-glow: rgba(193, 162, 88, 0.4);  /* 金色光暈 */
         }
 
         /* =========================================
-           2. 全域基礎樣式 (Apple Style)
+           2. 全域基礎樣式
            ========================================= */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
             outline: none; 
-            user-select: none; /* 防止長按時選取文字 */
+            user-select: none; 
         }
 
         body { 
             margin: 0; 
             padding: 0; 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; 
-            background-color: #EEF1F5; 
+            background-color: var(--bg); 
             color: var(--text-main); 
             height: 100vh; 
             display: flex; 
@@ -99,15 +99,15 @@
         }
 
         /* =========================================
-           3. 首頁 (Home) 儀表板樣式
+           3. 首頁 (Home) 元件
            ========================================= */
         
-        /* [NEW] 首頁 Header 修正：同一列顯示 */
+        /* 日期標頭 (同一列) */
         .home-header-row {
             margin-bottom: 20px;
             display: flex;
-            align-items: baseline; /* 讓文字底部對齊 */
-            gap: 12px; /* Today 與日期之間的間距 */
+            align-items: baseline;
+            gap: 12px;
         }
 
         .rhythm-capsule {
@@ -168,7 +168,6 @@
             letter-spacing: 1px; 
         }
 
-        /* 大圓環 */
         .m-goal-container { 
             display: flex; 
             justify-content: center; 
@@ -182,7 +181,6 @@
             height: 140px; 
         }
 
-        /* 首頁預覽區塊 (金色核心) */
         #home-ability-preview {
             display: flex;
             gap: 16px;
@@ -196,21 +194,14 @@
         .ability-orb {
             border-radius: 50%;
             position: relative;
-            
-            /* 玻璃質感背景 */
             background: rgba(255, 255, 255, 0.4); 
             backdrop-filter: blur(4px);            
             -webkit-backdrop-filter: blur(4px);    
-            
-            /* 金色邊框 */
             border: 1.5px solid rgba(193, 162, 88, 0.3); 
-            
-            /* 動畫 */
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             animation: breathe-glow-gold 4s infinite ease-in-out;
         }
 
-        /* 首頁金色呼吸動畫 */
         @keyframes breathe-glow-gold {
             0%, 100% { 
                 box-shadow: 0 4px 10px rgba(193, 162, 88, 0.1); 
@@ -223,18 +214,16 @@
         }
 
         /* =========================================
-           4. 每日頁面 (Daily) - 修正版面與細節
+           4. 每日頁面 (Daily)
            ========================================= */
         .daily-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 4px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; color: var(--text-main); }
         .header-date span { font-size: 15px; font-weight: 600; color: var(--text-main); }
-        
         .header-countdown { text-align: right; }
         .count-num { font-size: 36px; font-weight: 800; line-height: 1; color: var(--primary); letter-spacing: -1px; }
         .count-label { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
         .badge-ring { width: 64px; height: 64px; }
 
-        /* S_Goal 精密對齊卡片 */
         .main-card { 
             background: var(--card); 
             border-radius: 20px; 
@@ -247,16 +236,8 @@
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
         
-        /* [復原] v5.9 精密對齊核心樣式 */
-        .value-display { 
-            font-family: "Monaco", "Consolas", monospace; 
-            text-align: right; 
-            display: inline-block; 
-        }
-        
-        .invisible-decimal { 
-            visibility: hidden; 
-        } 
+        .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
+        .invisible-decimal { visibility: hidden; } 
         
         .bar-chart-bg { width: 100%; background: #F0F0F5; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
         .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s; }
@@ -315,7 +296,7 @@
         .breathe-btn:active { transform: scale(0.95); }
 
         /* =========================================
-           5. [互動版] 能力星系 (Galaxy System v8.0)
+           5. 能力星系 (Galaxy System)
            ========================================= */
         
         #galaxy-stage {
@@ -328,28 +309,20 @@
         .galaxy-node {
             position: absolute;
             border-radius: 50%;
-            
-            /* 玻璃質感 */
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
-            
             border: 2px solid rgba(74, 144, 226, 0.2);
-            
-            /* 內容置中 */
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             text-align: center; 
-            
-            /* 互動動畫 */
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             animation: breathe-glow 5s infinite ease-in-out;
             cursor: pointer;
         }
 
-        /* 選中狀態 */
         .galaxy-node.selected {
             transform: scale(1.15) !important; 
             z-index: 50 !important; 
@@ -357,129 +330,57 @@
             box-shadow: 0 0 30px var(--alloy-glow) !important; 
         }
 
-        /* 核心合金特定樣式 */
-        .alloy-node-style { 
-            width: 100px; 
-            height: 100px; 
-            z-index: 10;
-        }
-        
-        .alloy-content h4 { 
-            margin: 0; 
-            font-size: 16px; 
-            font-weight: 800; 
-            color: var(--text-main); 
-        }
-        
-        .alloy-content span { 
-            font-size: 11px; 
-            color: var(--text-sub); 
-            font-weight: 600; 
-            margin-top: 2px; 
-            display: block; 
-        }
+        .alloy-node-style { width: 100px; height: 100px; z-index: 10; }
+        .alloy-content h4 { margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .alloy-content span { font-size: 11px; color: var(--text-sub); font-weight: 600; margin-top: 2px; display: block; }
 
-        /* 輔助星星特定樣式 */
-        .star-node-style {
-            width: 50px; 
-            height: 50px; 
-            z-index: 5;
-            color: var(--primary); 
-            font-size: 12px; 
-            font-weight: 700;
-            border-width: 1.5px; 
-            background: rgba(255, 255, 255, 0.6);
-        }
-        
-        .star-node-style.empty {
-            border: 1.5px dashed #D1D1D6; 
-            background: rgba(255,255,255,0.2); 
-            color: transparent; 
-            box-shadow: none; 
-            animation: none;
-            pointer-events: none;
-        }
+        .star-node-style { width: 50px; height: 50px; z-index: 5; color: var(--primary); font-size: 12px; font-weight: 700; border-width: 1.5px; background: rgba(255, 255, 255, 0.6); }
+        .star-node-style.empty { border: 1.5px dashed #D1D1D6; background: rgba(255,255,255,0.2); color: transparent; box-shadow: none; animation: none; pointer-events: none; }
 
-        /* 預設呼吸動畫 */
-        @keyframes breathe-glow { 
-            0%, 100% { transform: scale(1); } 
-            50% { transform: scale(1.02); } 
-        }
+        @keyframes breathe-glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 
-        /* 底部增強控制台 [互動版] */
+        /* 底部增強控制台 */
         .enhancement-pad {
             position: relative; 
             z-index: 20;
             margin-top: -40px; 
-            
             background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(15px); 
             -webkit-backdrop-filter: blur(15px);
-            
             border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 24px; 
             padding: 20px; 
             text-align: center;
-            
             width: 92%; 
             max-width: 380px; 
             align-self: center;
             box-shadow: 0 8px 32px rgba(74, 144, 226, 0.1);
-            
             transition: 0.3s;
         }
         
-        .pad-title { 
-            font-size: 13px; 
-            color: var(--text-sub); 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            letter-spacing: 1px;
-        }
-        
-        .selected-name { 
-            font-size: 20px; 
-            font-weight: 800; 
-            color: var(--text-main); 
-            margin-bottom: 4px; 
-        }
-        
-        .selected-stat { 
-            font-size: 14px; 
-            color: var(--primary); 
-            font-weight: 600; 
-            margin-bottom: 16px; 
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
+        .pad-title { font-size: 13px; color: var(--text-sub); font-weight: 600; margin-bottom: 8px; letter-spacing: 1px; }
+        .selected-name { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+        .selected-stat { font-size: 14px; color: var(--primary); font-weight: 600; margin-bottom: 16px; display: flex; justify-content: center; gap: 10px; }
         
         .invest-btn {
             background: linear-gradient(135deg, var(--primary), #6EB4F7);
-            color: white; 
-            border: none; 
-            padding: 14px 0; 
-            border-radius: 30px; 
-            width: 100%;
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer;
+            color: white; border: none; padding: 14px 0; border-radius: 30px; width: 100%;
+            font-size: 16px; font-weight: 700; cursor: pointer;
             box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3); 
-            transition: 0.1s;
-            position: relative;
-            overflow: hidden;
+            transition: 0.1s; position: relative; overflow: hidden;
         }
-        
-        .invest-btn:active { 
-            transform: scale(0.96); 
-            box-shadow: 0 2px 10px rgba(74, 144, 226, 0.2);
+        .invest-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(74, 144, 226, 0.2); }
+        .invest-btn.disabled { background: #CCC; cursor: not-allowed; box-shadow: none; }
+
+        /* [NEW] 校準按鈕 (Calibration) */
+        .calibrate-btn { 
+            position: absolute; right: 20px; top: 20px; 
+            background: none; border: 1px solid #E5E5EA; 
+            padding: 4px 10px; border-radius: 12px; 
+            font-size: 12px; color: var(--text-sub); 
+            cursor: pointer; opacity: 0.8;
         }
-        
-        .invest-btn.disabled {
-            background: #CCC;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+        .calibrate-btn:active { background: #F0F0F5; }
 
         .quote-area { text-align: center; margin: 10px 0 10px 0; color: var(--gold); font-style: italic; font-weight: 600; font-size: 14px; padding: 0 10px; line-height: 1.4; }
         .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 10px 30px 10px; border-top: 1px solid #EEE; margin-top: 0; }
@@ -523,7 +424,7 @@
             </div>
             
             <div id="home-quote" style="text-align:center; color:var(--gold); font-size:14px; margin-top:30px; font-style:italic; font-weight:600;"></div>
-            <div style="text-align:center; margin-top:auto; padding-bottom:20px; font-size:12px; color:#E0E0E0; font-weight:700; letter-spacing:2px;">iTree OS v8.2</div>
+            <div style="text-align:center; margin-top:auto; padding-bottom:20px; font-size:12px; color:#E0E0E0; font-weight:700; letter-spacing:2px;">iTree OS v9.2</div>
         </div>
 
         <div id="view-daily" class="view-section">
@@ -579,6 +480,8 @@
             </div>
 
             <div class="enhancement-pad" id="control-pad">
+                <button class="calibrate-btn" onclick="openCalibrate()">⚙️ 校準</button>
+                
                 <div class="pad-title">能力增強控制台</div>
                 <div class="selected-name" id="sel-name">請選擇核心</div>
                 <div class="selected-stat" id="sel-stat"><span>--</span></div>
@@ -597,7 +500,7 @@
 
     <script>
         // ==========================================
-        // JavaScript 核心引擎 v8.2 (Header Fixed)
+        // JavaScript 核心引擎 v9.2 (Full Aesthetics)
         // ==========================================
         const CACHE_KEY = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY);
@@ -607,30 +510,32 @@
         let syncingTaskNames = new Set();
         let isExpanded = false;
         
-        // --- 互動狀態變數 ---
+        // 互動狀態
         let userWallet = 0;       
         let selectedNode = null;  
         let chargeInterval = null; 
         let tempInvested = 0;     
 
-        // --- 星系座標定義 (v6.9 Final Polish) ---
+        // 星系座標 (Final Polish)
         const alloySlots = [
             'top: 5%; left: 50%; transform: translateX(-50%);', // 頂點
             'top: 40%; left: 18%;',  // 左下
             'top: 50%; right: 18%;'  // 右下
         ];
         
+        // 輔助星星 (環繞軌道 - 完美座標 & 位置說明)
         const starSlots = [
-            'top: 8%; left: 10%; scale: 0.85;',     
-            'top: 15%; right: 5%; scale: 0.8;',     
-            'top: 22%; left: 22%; scale: 0.8;',     
-            'top: 32%; right: 30%; scale: 0.9;',    
-            'top: 70%; left: 38%; scale: 0.85;',    
-            'top: 60%; left: 5%; scale: 0.75;',     
-            'top: 65%; right: 5%; scale: 0.8;'      
+            'top: 8%; left: 10%; scale: 0.85;',     // 1. 左上角 (數位)
+            'top: 15%; right: 5%; scale: 0.8;',     // 2. 右上角 (整合)
+            'top: 22%; left: 22%; scale: 0.8;',     // 3. 左側偏中 (應用) ★ 您剛調整的
+            'top: 35%; right: 30%; scale: 0.9;',    // 4. 右側內圈 (視覺重心)
+            'top: 70%; left: 38%; scale: 0.85;',    // 5. 正下方 (基底)
+            'top: 60%; left: 5%; scale: 0.75;',     // 6. 左下邊緣 (遠景)
+            'top: 65%; right: 5%; scale: 0.8;'      // 7. 右下邊緣
         ];
 
-        // 1. 數字格式化 (完整保留 v5.9 邏輯)
+
+        // 1. 數字格式化 (完整版)
         function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
@@ -645,17 +550,20 @@
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString();
         }
 
-        // 2. 顏色邏輯 (完整保留 v5.10 邏輯)
+        // 2. 顏色邏輯 (完整版)
         function getStatusColor(current, total, direction) {
             const blue = "#4A90E2", green = "#84A59D", amber = "#E67E22";
             if (!total || !direction) return blue;
             const ratio = current / total;
-            if (direction.includes("向下")) { return ratio >= 1.25 ? amber : (ratio <= 0.75 ? green : blue); } 
-            else if (direction.includes("向上")) { return ratio >= 1.25 ? green : (ratio <= 0.75 ? amber : blue); }
+            if (direction.includes("向下")) { 
+                return ratio >= 1.25 ? amber : (ratio <= 0.75 ? green : blue); 
+            } else if (direction.includes("向上")) { 
+                return ratio >= 1.25 ? green : (ratio <= 0.75 ? amber : blue); 
+            }
             return blue;
         }
 
-        // 3. [光譜邏輯] 核心合金顏色計算 (鎖定金色)
+        // 3. 核心顏色 (鎖定金色版)
         function getAlloyColor(tokens) {
             return { 
                 border: 'rgba(193, 162, 88, 0.6)', 
@@ -669,7 +577,6 @@
         function init() {
             setRhythm(currentRhythm);
             const d = new Date();
-            // [FIX] 更新日期顯示格式：1/9 (五)
             const dayStr = ['日','一','二','三','四','五','六'][d.getDay()];
             document.getElementById('home-date').innerText = `${d.getMonth()+1}/${d.getDate()} (${dayStr})`;
             
@@ -685,7 +592,6 @@
             }
         }
 
-        // 視圖切換
         function switchView(view) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${view}`).classList.add('active');
@@ -695,7 +601,6 @@
             }
         }
 
-        // 節奏模式設定
         function setRhythm(mode) {
             currentRhythm = mode;
             localStorage.setItem('user_rhythm', mode);
@@ -703,7 +608,6 @@
             if(globalData) renderDaily(globalData);
         }
 
-        // 日期導航
         function changeDate(n) { 
             const d = new Date(currentDateStr); 
             d.setDate(d.getDate()+n); 
@@ -716,7 +620,6 @@
             loadData(currentDateStr); 
         }
         
-        // 任務展開/收合
         function toggleExpand() {
             isExpanded = !isExpanded;
             const c = document.getElementById('extra-tasks-container');
@@ -732,7 +635,6 @@
             }
         }
 
-        // 核心資料讀取
         async function loadData(date, silent=false) {
             if(!silent) document.getElementById('loading-overlay').style.display = 'flex';
             try {
@@ -754,7 +656,6 @@
             renderAbility(data);
         }
 
-        // --- Render: Home ---
         function renderHome(data) {
             const mGoal = data.goals.find(g => g.tag === 'M_Goal');
             const ringContainer = document.getElementById('home-m-goal-ring');
@@ -791,7 +692,6 @@
             }
         }
 
-        // --- Render: Daily ---
         function renderDaily(data) {
             const wrapper = document.getElementById('daily-content-wrapper');
             const breathe = document.getElementById('breathe-mode-container');
@@ -870,7 +770,6 @@
             });
         }
 
-        // --- Render: Ability (Galaxy v8.0) ---
         function renderAbility(data) {
             const stage = document.getElementById('galaxy-stage');
             stage.innerHTML = ''; 
@@ -906,7 +805,6 @@
             });
         }
 
-        // --- 互動核心邏輯 ---
         function selectNode(ability, el) {
             if (!ability.isActive) return; 
             selectedNode = ability;
@@ -920,6 +818,30 @@
             const btn = document.getElementById('invest-btn');
             btn.classList.remove('disabled');
             btn.innerText = "長按投入代幣";
+        }
+
+        // 校準互動
+        async function openCalibrate() {
+            if(!selectedNode) { 
+                alert("請先選擇一個能力"); 
+                return; 
+            }
+            if(selectedNode.initial > 0) { 
+                alert("此能力已完成初始校準 (Locked)。\n請透過每日任務累積代幣。"); 
+                return; 
+            }
+            
+            const lvl = prompt(`【初始校準】\n設定 ${selectedNode.name} 的當前等級 (1-10)：`);
+            if(lvl && !isNaN(lvl) && lvl>=1 && lvl<=10) {
+                if(confirm(`確定要將等級設定為 Lv.${lvl} 嗎？\n(設定後將鎖定初始值)`)) {
+                    document.getElementById('invest-btn').innerText = "校準中...";
+                    await fetch(`${currentApiUrl}?action=calibrateLevel&slotId=${selectedNode.slotId}&targetLevel=${lvl}`);
+                    loadData(currentDateStr, true);
+                    alert("校準完成！");
+                }
+            } else if (lvl) { 
+                alert("請輸入有效的等級 (1-10)"); 
+            }
         }
 
         function startCharge() {
@@ -962,7 +884,6 @@
             }
         }
 
-        // --- 任務功能 ---
         async function toggleTask(n, s) { 
             await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`); 
             setTimeout(()=>{
