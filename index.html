@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dream Machine OS v9.2 Aesthetic Full</title>
+    <title>Dream Machine OS v9.3 Final Polish</title>
     <style>
         /* =========================================
-           1. 核心配色與系統變數 (Aesthetic Variables)
+           1. 核心配色與系統變數
            ========================================= */
         :root {
             --primary: #4A90E2;    /* 專業藍 */
@@ -17,204 +17,50 @@
             --text-main: #1D1D1F;  /* 主要文字 */
             --text-sub: #86868B;   /* 次要文字 */
             --text-light: #D1D1D6; /* 淡色裝飾 */
-            --alloy-glow: rgba(74, 144, 226, 0.4); /* 基礎光暈 */
-            --gold-glow: rgba(193, 162, 88, 0.4);  /* 金色光暈 */
+            --alloy-glow: rgba(74, 144, 226, 0.4); 
+            --gold-glow: rgba(193, 162, 88, 0.4); 
         }
 
         /* =========================================
            2. 全域基礎樣式
            ========================================= */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            outline: none; 
-            user-select: none; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text-main); height: 100vh; display: flex; justify-content: center; overscroll-behavior-y: contain; -webkit-font-smoothing: antialiased; }
+        .app-container { width: 100%; max-width: 480px; background-color: var(--bg); height: 100%; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); overflow-y: auto; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--bg); 
-            color: var(--text-main); 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center;
-            overscroll-behavior-y: contain; 
-            -webkit-font-smoothing: antialiased; 
-        }
+        /* 視圖切換 */
+        .view-section { display: none; width: 100%; flex-direction: column; padding: 20px; animation: fadeIn 0.35s ease-out; }
+        .view-section.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .app-container {
-            width: 100%; 
-            max-width: 480px; 
-            background-color: var(--bg); 
-            height: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            box-shadow: 0 0 40px rgba(0,0,0,0.1); 
-            overflow-y: auto; 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* 視圖切換動畫 */
-        .view-section { 
-            display: none; 
-            width: 100%; 
-            flex-direction: column; 
-            padding: 20px; 
-            animation: fadeIn 0.35s ease-out; 
-        }
-        
-        .view-section.active { 
-            display: flex; 
-        }
-        
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-        /* 通用返回導航 */
-        .back-nav { 
-            display: flex; 
-            align-items: center; 
-            margin-bottom: 8px; 
-            cursor: pointer; 
-            color: var(--primary); 
-            font-weight: 600; 
-            font-size: 16px; 
-            opacity: 0.9; 
-            transition: 0.2s; 
-        }
-        
-        .back-nav:active { 
-            opacity: 0.5; 
-        }
-        
-        .back-nav span { 
-            margin-right: 6px; 
-            font-size: 20px; 
-            font-weight: bold; 
-        }
+        /* 導航 */
+        .back-nav { display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; color: var(--primary); font-weight: 600; font-size: 16px; opacity: 0.9; transition: 0.2s; }
+        .back-nav:active { opacity: 0.5; }
+        .back-nav span { margin-right: 6px; font-size: 20px; font-weight: bold; }
 
         /* =========================================
-           3. 首頁 (Home) 元件
+           3. 首頁元件
            ========================================= */
-        
-        /* 日期標頭 (同一列) */
-        .home-header-row {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
-        }
-
-        .rhythm-capsule {
-            display: flex; 
-            background: #E5E5EA; 
-            border-radius: 30px; 
-            padding: 4px; 
-            margin-bottom: 24px;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
-        }
-        
-        .rhythm-btn {
-            flex: 1; 
-            border: none; 
-            background: none; 
-            padding: 12px 0; 
-            border-radius: 24px;
-            font-size: 14px; 
-            font-weight: 600; 
-            color: var(--text-sub); 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .rhythm-btn.active {
-            background: #FFFFFF; 
-            color: var(--text-main); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12); 
-            transform: scale(1.02);
-        }
-        
+        .home-header-row { margin-bottom: 20px; display: flex; align-items: baseline; gap: 12px; }
+        .rhythm-capsule { display: flex; background: #E5E5EA; border-radius: 30px; padding: 4px; margin-bottom: 24px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); }
+        .rhythm-btn { flex: 1; border: none; background: none; padding: 12px 0; border-radius: 24px; font-size: 14px; font-weight: 600; color: var(--text-sub); cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .rhythm-btn.active { background: #FFFFFF; color: var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.12); transform: scale(1.02); }
         .rhythm-btn[data-mode="breathe"].active { color: var(--breath); }
         .rhythm-btn[data-mode="sprint"].active { color: #E67E22; }
 
-        .nav-card {
-            background: var(--card); 
-            border-radius: 24px; 
-            padding: 24px; 
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.04); 
-            cursor: pointer; 
-            transition: all 0.2s ease;
-            position: relative; 
-            overflow: hidden;
-        }
-        
-        .nav-card:active { 
-            transform: scale(0.98); 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02); 
-        }
-        
-        .nav-label { 
-            font-size: 14px; 
-            font-weight: 700; 
-            color: var(--text-sub); 
-            margin-bottom: 12px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-        }
+        .nav-card { background: var(--card); border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden; }
+        .nav-card:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .nav-label { font-size: 14px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .m-goal-container { display: flex; justify-content: center; align-items: center; padding: 10px 0; min-height: 140px; }
+        .big-ring { width: 140px; height: 140px; }
 
-        .m-goal-container { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 10px 0; 
-            min-height: 140px; 
-        }
-        
-        .big-ring { 
-            width: 140px; 
-            height: 140px; 
-        }
-
-        #home-ability-preview {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            align-items: flex-end; 
-            margin-top: 20px; 
-            min-height: 50px;
-            padding-bottom: 5px;
-        }
-
-        .ability-orb {
-            border-radius: 50%;
-            position: relative;
-            background: rgba(255, 255, 255, 0.4); 
-            backdrop-filter: blur(4px);            
-            -webkit-backdrop-filter: blur(4px);    
-            border: 1.5px solid rgba(193, 162, 88, 0.3); 
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            animation: breathe-glow-gold 4s infinite ease-in-out;
-        }
-
-        @keyframes breathe-glow-gold {
-            0%, 100% { 
-                box-shadow: 0 4px 10px rgba(193, 162, 88, 0.1); 
-                border-color: rgba(193, 162, 88, 0.3); 
-            }
-            50% { 
-                box-shadow: 0 4px 20px rgba(193, 162, 88, 0.3); 
-                border-color: rgba(193, 162, 88, 0.6); 
-            }
-        }
+        /* 首頁預覽區塊 */
+        #home-ability-preview { display: flex; gap: 16px; justify-content: center; align-items: flex-end; margin-top: 20px; min-height: 50px; padding-bottom: 5px; }
+        .ability-orb { border-radius: 50%; position: relative; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); border: 1.5px solid rgba(193, 162, 88, 0.3); transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); animation: breathe-glow-gold 4s infinite ease-in-out; }
+        @keyframes breathe-glow-gold { 0%, 100% { box-shadow: 0 4px 10px rgba(193, 162, 88, 0.1); border-color: rgba(193, 162, 88, 0.3); } 50% { box-shadow: 0 4px 20px rgba(193, 162, 88, 0.3); border-color: rgba(193, 162, 88, 0.6); } }
 
         /* =========================================
-           4. 每日頁面 (Daily)
+           4. 每日頁面元件
            ========================================= */
         .daily-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 4px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; color: var(--text-main); }
@@ -224,68 +70,34 @@
         .count-label { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-top: 4px; }
         .badge-ring { width: 64px; height: 64px; }
 
-        .main-card { 
-            background: var(--card); 
-            border-radius: 20px; 
-            padding: 16px 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
-            margin-bottom: 16px; 
-            text-align: center;
-        }
-        
+        .main-card { background: var(--card); border-radius: 20px; padding: 16px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 16px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
-        
         .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
         .invisible-decimal { visibility: hidden; } 
-        
         .bar-chart-bg { width: 100%; background: #F0F0F5; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
         .bar-chart-fill { height: 100%; border-radius: 5px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s; }
 
         .tasks-section { margin-top: 10px; }
         .tasks-header-row { display: flex; align-items: center; margin-bottom: 18px; padding: 0 4px; }
         .tasks-header { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
-        
-        .workload-badge { 
-            width: 24px; height: 24px; background: #E5E5EA; color: var(--text-sub); 
-            font-size: 12px; font-weight: 800; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; 
-        }
-        
-        .add-btn { 
-            width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; 
-            border: none; font-size: 24px; font-weight: bold; margin-left: auto; cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(74,144,226,0.4); transition: transform 0.2s; 
-            display: flex; align-items: center; justify-content: center; padding-bottom: 4px;
-        }
+        .workload-badge { width: 24px; height: 24px; background: #E5E5EA; color: var(--text-sub); font-size: 12px; font-weight: 800; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .add-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 24px; font-weight: bold; margin-left: auto; cursor: pointer; box-shadow: 0 4px 12px rgba(74,144,226,0.4); transition: transform 0.2s; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; }
         .add-btn:active { transform: scale(0.9); }
 
-        .task-item { 
-            background: var(--card); border-radius: 18px; padding: 18px; margin-bottom: 12px; 
-            display: flex; align-items: flex-start; box-shadow: 0 2px 8px rgba(0,0,0,0.03); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid transparent;
-        }
+        .task-item { background: var(--card); border-radius: 18px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: 1px solid transparent; }
         .task-item:active { transform: scale(0.99); background: #FAFAFA; }
         .task-item.syncing { opacity: 0.6; pointer-events: none; filter: grayscale(80%); transform: scale(0.98); } 
-
-        .task-checkbox { 
-            width: 24px; height: 24px; border: 2.5px solid #E5E5EA; border-radius: 50%; 
-            margin-right: 14px; flex-shrink: 0; margin-top: 2px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 12px; font-weight: 800; color: var(--text-sub); transition: 0.3s; 
-        }
+        .task-checkbox { width: 24px; height: 24px; border: 2.5px solid #E5E5EA; border-radius: 50%; margin-right: 14px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--text-sub); transition: 0.3s; }
         .task-item.done .task-checkbox { background-color: var(--primary); border-color: var(--primary); color: white; transform: scale(1.1); }
         .task-item.done .task-checkbox::after { content: '✔'; font-size: 14px; }
         .task-item.done .task-checkbox span { display: none; }
         .task-item.done h4 { text-decoration: line-through; color: #C7C7CC; }
-        
         .task-content { flex-grow: 1; }
         .task-content h4 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; color: var(--text-main); transition: 0.3s; }
         .task-content p { margin: 5px 0 0 0; font-size: 13px; color: var(--text-sub); font-style: italic; }
-        
         .edit-btn { background: none; border: none; color: #D1D1D6; font-size: 18px; padding: 8px; cursor: pointer; transition: 0.2s; opacity: 0.6; margin-left: auto; align-self: center; }
         .edit-btn:active { color: var(--primary); opacity: 1; transform: scale(1.2); }
-
         .extra-tasks-container { overflow: hidden; transition: max-height 0.4s ease-out; max-height: 0; border-top: 1px dashed transparent; margin-top: 0; }
         .extra-tasks-container.expanded { max-height: 1200px; border-top-color: #EEE; margin-top: 10px; padding-top: 10px; }
 
@@ -298,37 +110,15 @@
         /* =========================================
            5. 能力星系 (Galaxy System)
            ========================================= */
-        
-        #galaxy-stage {
-            position: relative;
-            width: 100%;
-            height: 440px; 
-            margin-top: 10px;
-        }
-
+        #galaxy-stage { position: relative; width: 100%; height: 440px; margin-top: 10px; }
         .galaxy-node {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
+            position: absolute; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             border: 2px solid rgba(74, 144, 226, 0.2);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            animation: breathe-glow 5s infinite ease-in-out;
-            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); animation: breathe-glow 5s infinite ease-in-out; cursor: pointer;
         }
-
-        .galaxy-node.selected {
-            transform: scale(1.15) !important; 
-            z-index: 50 !important; 
-            border-color: var(--gold); 
-            box-shadow: 0 0 30px var(--alloy-glow) !important; 
-        }
+        .galaxy-node.selected { transform: scale(1.15) !important; z-index: 50 !important; border-color: var(--gold); box-shadow: 0 0 30px var(--alloy-glow) !important; }
 
         .alloy-node-style { width: 100px; height: 100px; z-index: 10; }
         .alloy-content h4 { margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main); }
@@ -336,28 +126,16 @@
 
         .star-node-style { width: 50px; height: 50px; z-index: 5; color: var(--primary); font-size: 12px; font-weight: 700; border-width: 1.5px; background: rgba(255, 255, 255, 0.6); }
         .star-node-style.empty { border: 1.5px dashed #D1D1D6; background: rgba(255,255,255,0.2); color: transparent; box-shadow: none; animation: none; pointer-events: none; }
-
         @keyframes breathe-glow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 
-        /* 底部增強控制台 */
+        /* 底部控制台 */
         .enhancement-pad {
-            position: relative; 
-            z-index: 20;
-            margin-top: -40px; 
-            background: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
-            border-radius: 24px; 
-            padding: 20px; 
-            text-align: center;
-            width: 92%; 
-            max-width: 380px; 
-            align-self: center;
-            box-shadow: 0 8px 32px rgba(74, 144, 226, 0.1);
-            transition: 0.3s;
+            position: relative; z-index: 20; margin-top: -40px;
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1.5px solid rgba(255, 255, 255, 0.9); border-radius: 24px; padding: 20px; text-align: center;
+            width: 92%; max-width: 380px; align-self: center;
+            box-shadow: 0 8px 32px rgba(74, 144, 226, 0.1); transition: 0.3s;
         }
-        
         .pad-title { font-size: 13px; color: var(--text-sub); font-weight: 600; margin-bottom: 8px; letter-spacing: 1px; }
         .selected-name { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
         .selected-stat { font-size: 14px; color: var(--primary); font-weight: 600; margin-bottom: 16px; display: flex; justify-content: center; gap: 10px; }
@@ -366,20 +144,13 @@
             background: linear-gradient(135deg, var(--primary), #6EB4F7);
             color: white; border: none; padding: 14px 0; border-radius: 30px; width: 100%;
             font-size: 16px; font-weight: 700; cursor: pointer;
-            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3); 
-            transition: 0.1s; position: relative; overflow: hidden;
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3); transition: 0.1s; position: relative; overflow: hidden;
         }
         .invest-btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(74, 144, 226, 0.2); }
         .invest-btn.disabled { background: #CCC; cursor: not-allowed; box-shadow: none; }
 
-        /* [NEW] 校準按鈕 (Calibration) */
-        .calibrate-btn { 
-            position: absolute; right: 20px; top: 20px; 
-            background: none; border: 1px solid #E5E5EA; 
-            padding: 4px 10px; border-radius: 12px; 
-            font-size: 12px; color: var(--text-sub); 
-            cursor: pointer; opacity: 0.8;
-        }
+        /* 校準按鈕 */
+        .calibrate-btn { position: absolute; right: 20px; top: 20px; background: none; border: 1px solid #E5E5EA; padding: 4px 10px; border-radius: 12px; font-size: 12px; color: var(--text-sub); cursor: pointer; opacity: 0.8; }
         .calibrate-btn:active { background: #F0F0F5; }
 
         .quote-area { text-align: center; margin: 10px 0 10px 0; color: var(--gold); font-style: italic; font-weight: 600; font-size: 14px; padding: 0 10px; line-height: 1.4; }
@@ -424,7 +195,7 @@
             </div>
             
             <div id="home-quote" style="text-align:center; color:var(--gold); font-size:14px; margin-top:30px; font-style:italic; font-weight:600;"></div>
-            <div style="text-align:center; margin-top:auto; padding-bottom:20px; font-size:12px; color:#E0E0E0; font-weight:700; letter-spacing:2px;">iTree OS v9.2</div>
+            <div style="text-align:center; margin-top:auto; padding-bottom:20px; font-size:12px; color:#E0E0E0; font-weight:700; letter-spacing:2px;">iTree OS v9.3</div>
         </div>
 
         <div id="view-daily" class="view-section">
@@ -481,7 +252,6 @@
 
             <div class="enhancement-pad" id="control-pad">
                 <button class="calibrate-btn" onclick="openCalibrate()">⚙️ 校準</button>
-                
                 <div class="pad-title">能力增強控制台</div>
                 <div class="selected-name" id="sel-name">請選擇核心</div>
                 <div class="selected-stat" id="sel-stat"><span>--</span></div>
@@ -500,7 +270,7 @@
 
     <script>
         // ==========================================
-        // JavaScript 核心引擎 v9.2 (Full Aesthetics)
+        // JavaScript 核心引擎 v9.3 (Fix UI Stuck)
         // ==========================================
         const CACHE_KEY = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY);
@@ -510,68 +280,51 @@
         let syncingTaskNames = new Set();
         let isExpanded = false;
         
-        // 互動狀態
         let userWallet = 0;       
         let selectedNode = null;  
         let chargeInterval = null; 
         let tempInvested = 0;     
 
-        // 星系座標 (Final Polish)
         const alloySlots = [
             'top: 5%; left: 50%; transform: translateX(-50%);', // 頂點
-            'top: 40%; left: 18%;',  // 左下
+            'top: 40%; left: 24%;',  // 左下
             'top: 50%; right: 18%;'  // 右下
         ];
         
-        // 輔助星星 (環繞軌道 - 完美座標 & 位置說明)
         const starSlots = [
-            'top: 8%; left: 10%; scale: 0.85;',     // 1. 左上角 (數位)
-            'top: 15%; right: 5%; scale: 0.8;',     // 2. 右上角 (整合)
-            'top: 22%; left: 22%; scale: 0.8;',     // 3. 左側偏中 (應用) ★ 您剛調整的
-            'top: 35%; right: 30%; scale: 0.9;',    // 4. 右側內圈 (視覺重心)
-            'top: 70%; left: 38%; scale: 0.85;',    // 5. 正下方 (基底)
-            'top: 60%; left: 5%; scale: 0.75;',     // 6. 左下邊緣 (遠景)
-            'top: 65%; right: 5%; scale: 0.8;'      // 7. 右下邊緣
+            'top: 8%; left: 10%; scale: 0.85;',     
+            'top: 15%; right: 5%; scale: 0.8;',     
+            'top: 22%; left: 22%; scale: 0.8;',     
+            'top: 28%; right: 30%; scale: 0.9;',    
+            'top: 70%; left: 38%; scale: 0.85;',    
+            'top: 60%; left: 5%; scale: 0.75;',     
+            'top: 65%; right: 5%; scale: 0.8;'      
         ];
 
-
-        // 1. 數字格式化 (完整版)
         function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
             if (unit === "%") {
                 if (num > 0 && num < 1) num *= 100;
                 let fixed = num.toFixed(1);
-                if (!isCurrent && fixed.endsWith(".0")) {
-                    return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
-                }
+                if (!isCurrent && fixed.endsWith(".0")) return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
                 return fixed;
             }
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString();
         }
 
-        // 2. 顏色邏輯 (完整版)
         function getStatusColor(current, total, direction) {
             const blue = "#4A90E2", green = "#84A59D", amber = "#E67E22";
             if (!total || !direction) return blue;
             const ratio = current / total;
-            if (direction.includes("向下")) { 
-                return ratio >= 1.25 ? amber : (ratio <= 0.75 ? green : blue); 
-            } else if (direction.includes("向上")) { 
-                return ratio >= 1.25 ? green : (ratio <= 0.75 ? amber : blue); 
-            }
-            return blue;
+            if (direction.includes("向下")) return ratio >= 1.25 ? amber : (ratio <= 0.75 ? green : blue);
+            return ratio >= 1.25 ? green : (ratio <= 0.75 ? amber : blue);
         }
 
-        // 3. 核心顏色 (鎖定金色版)
         function getAlloyColor(tokens) {
-            return { 
-                border: 'rgba(193, 162, 88, 0.6)', 
-                shadow: 'rgba(193, 162, 88, 0.4)' 
-            }; 
+            return { border: 'rgba(193, 162, 88, 0.6)', shadow: 'rgba(193, 162, 88, 0.4)' }; 
         }
 
-        // 初始化
         init();
 
         function init() {
@@ -580,9 +333,8 @@
             const dayStr = ['日','一','二','三','四','五','六'][d.getDay()];
             document.getElementById('home-date').innerText = `${d.getMonth()+1}/${d.getDate()} (${dayStr})`;
             
-            if (currentApiUrl) {
-                loadData(currentDateStr);
-            } else {
+            if (currentApiUrl) loadData(currentDateStr);
+            else {
                  let u = prompt("請輸入 API 網址：");
                  if(u && u.includes('script.google.com')) { 
                      currentApiUrl = u; 
@@ -595,10 +347,7 @@
         function switchView(view) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${view}`).classList.add('active');
-            if(view === 'daily') {
-                loadData(currentDateStr); 
-                window.scrollTo(0,0);
-            }
+            if(view === 'daily') { loadData(currentDateStr); window.scrollTo(0,0); }
         }
 
         function setRhythm(mode) {
@@ -609,30 +358,15 @@
         }
 
         function changeDate(n) { 
-            const d = new Date(currentDateStr); 
-            d.setDate(d.getDate()+n); 
-            currentDateStr = d.toISOString().split('T')[0]; 
-            loadData(currentDateStr); 
+            const d = new Date(currentDateStr); d.setDate(d.getDate()+n); 
+            currentDateStr = d.toISOString().split('T')[0]; loadData(currentDateStr); 
         }
-        
-        function goToday() { 
-            currentDateStr = new Date().toISOString().split('T')[0]; 
-            loadData(currentDateStr); 
-        }
-        
+        function goToday() { currentDateStr = new Date().toISOString().split('T')[0]; loadData(currentDateStr); }
         function toggleExpand() {
             isExpanded = !isExpanded;
-            const c = document.getElementById('extra-tasks-container');
-            const b = document.getElementById('workload-badge');
-            if(isExpanded) { 
-                c.classList.add('expanded'); 
-                b.style.background='var(--primary)'; 
-                b.style.color='white'; 
-            } else { 
-                c.classList.remove('expanded'); 
-                b.style.background='#E5E5EA'; 
-                b.style.color='var(--text-sub)'; 
-            }
+            const c = document.getElementById('extra-tasks-container'), b = document.getElementById('workload-badge');
+            if(isExpanded) { c.classList.add('expanded'); b.style.background='var(--primary)'; b.style.color='white'; }
+            else { c.classList.remove('expanded'); b.style.background='#E5E5EA'; b.style.color='var(--text-sub)'; }
         }
 
         async function loadData(date, silent=false) {
@@ -659,18 +393,13 @@
         function renderHome(data) {
             const mGoal = data.goals.find(g => g.tag === 'M_Goal');
             const ringContainer = document.getElementById('home-m-goal-ring');
-            
             if(mGoal) {
                 let p = Math.round((mGoal.current/mGoal.total)*100);
                 ringContainer.innerHTML = `<svg class="big-ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" stroke="#E5E5EA" stroke-width="8" fill="none"/><circle cx="50" cy="50" r="45" stroke="#4A90E2" stroke-width="8" fill="none" stroke-dasharray="283" style="stroke-dashoffset:${283*(1-p/100)}" transform="rotate(-90 50 50)"/><text x="50" y="55" text-anchor="middle" font-size="20" font-weight="800" fill="#4A90E2">${p}%</text></svg>`;
-            } else { 
-                ringContainer.innerHTML = `<span style="color:#CCC; font-size:12px;">未設定 M_Goal</span>`; 
-            }
+            } else { ringContainer.innerHTML = `<span style="color:#CCC; font-size:12px;">未設定 M_Goal</span>`; }
 
-            const prev = document.getElementById('home-ability-preview'); 
-            prev.innerHTML = '';
+            const prev = document.getElementById('home-ability-preview'); prev.innerHTML = '';
             const activeAlloys = data.abilities.filter(a => a.type === 'Alloy' && a.isActive).slice(0, 3);
-            
             if (activeAlloys.length === 0) {
                 prev.innerHTML = `<div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div><div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div><div class="ability-orb" style="width:20px;height:20px;background:rgba(0,0,0,0.05);border-color:transparent;animation:none;"></div>`;
             } else {
@@ -678,7 +407,6 @@
                     const color = getAlloyColor(a.tokens);
                     const size = Math.min(22 + (a.level * 3), 48);
                     const lift = (index === 1 && activeAlloys.length === 3) ? 'translateY(-10px)' : 'translateY(0)';
-                    
                     const div = document.createElement('div');
                     div.className = 'ability-orb';
                     div.style.width = `${size}px`;
@@ -686,258 +414,141 @@
                     div.style.transform = lift;
                     div.style.borderColor = color.border;
                     div.style.boxShadow = `0 4px 15px ${color.shadow}`;
-                    
                     prev.appendChild(div);
                 });
             }
         }
 
         function renderDaily(data) {
-            const wrapper = document.getElementById('daily-content-wrapper');
-            const breathe = document.getElementById('breathe-mode-container');
-            
+            const wrapper = document.getElementById('daily-content-wrapper'), breathe = document.getElementById('breathe-mode-container');
             document.getElementById('daily-quote').innerText = data.quote || "";
-            
             const d = new Date(currentDateStr);
             document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
             document.getElementById('display-weekday').innerText = `(${['日','一','二','三','四','五','六'][d.getDay()]})`;
-            
             const ist = currentDateStr === new Date().toISOString().split('T')[0];
             document.getElementById('nav-center-action').className = ist ? 'nav-center-btn is-today-label' : 'nav-center-btn';
 
-            if (currentRhythm === 'breathe') {
-                wrapper.style.display = 'none'; 
-                breathe.style.display = 'block'; 
-                return;
-            }
-            wrapper.style.display = 'block'; 
-            breathe.style.display = 'none';
+            if (currentRhythm === 'breathe') { wrapper.style.display = 'none'; breathe.style.display = 'block'; return; }
+            wrapper.style.display = 'block'; breathe.style.display = 'none';
 
             const cdGoal = data.goals.find(g => g.unit === '天');
             const rGoal = data.goals.find(g => g.type === 'ring');
             if (cdGoal) document.getElementById('header-countdown').innerHTML = `<div class="count-num">${cdGoal.total - cdGoal.current}</div><div class="count-label">倒數天數</div>`;
-            if (rGoal) {
-                let p = Math.min(100, Math.round((rGoal.current / rGoal.total) * 100)) || 0;
-                document.getElementById('header-ring').innerHTML = `<svg class="badge-ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="none"/><circle cx="32" cy="32" r="28" stroke="#4A90E2" stroke-width="5" fill="none" stroke-dasharray="176" style="stroke-dashoffset:${176*(1-p/100)}" transform="rotate(-90 32 32)"/><text x="50%" y="55%" text-anchor="middle" font-size="20" font-weight="900" fill="#4A90E2">${p}%</text></svg>`;
-            }
+            if (rGoal) { let p = Math.min(100, Math.round((rGoal.current / rGoal.total) * 100)) || 0; document.getElementById('header-ring').innerHTML = `<svg class="badge-ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="none"/><circle cx="32" cy="32" r="28" stroke="#4A90E2" stroke-width="5" fill="none" stroke-dasharray="176" style="stroke-dashoffset:${176*(1-p/100)}" transform="rotate(-90 32 32)"/><text x="50%" y="55%" text-anchor="middle" font-size="20" font-weight="900" fill="#4A90E2">${p}%</text></svg>`; }
 
             const mainCardEl = document.getElementById('main-goal-card');
             const barGoal = data.goals.find(g => g.tag === 'S_Goal');
             if (barGoal) {
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
                 const activeColor = getStatusColor(barGoal.current, barGoal.total, barGoal.direction);
-                mainCardEl.innerHTML = `
-                    <div class="bar-wrapper">
-                        <div class="bar-label"><span>現況</span><span style="color:${activeColor}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: ${activeColor};"></div></div>
-                        <div class="bar-label"><span>目標</span><span style="color:var(--gold);"><span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: var(--gold);"></div></div>
-                    </div><h3 class="card-title">${barGoal.name}</h3>`;
+                mainCardEl.innerHTML = `<div class="bar-wrapper"><div class="bar-label"><span>現況</span><span style="color:${activeColor}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: ${activeColor};"></div></div><div class="bar-label"><span>目標</span><span style="color:var(--gold);"><span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: var(--gold);"></div></div></div><h3 class="card-title">${barGoal.name}</h3>`;
             }
 
-            const topList = document.getElementById('top-tasks-list');
-            const extraList = document.getElementById('extra-tasks-list');
-            const badge = document.getElementById('workload-badge');
+            const topList = document.getElementById('top-tasks-list'), extraList = document.getElementById('extra-tasks-list'), badge = document.getElementById('workload-badge');
             topList.innerHTML = ''; extraList.innerHTML = '';
-
-            if (data.tasks.length > 3) {
-                badge.style.display = 'flex'; 
-                badge.innerText = data.tasks.length; 
-            } else {
-                badge.style.display = 'none'; 
-                isExpanded = false; 
-                document.getElementById('extra-tasks-container').classList.remove('expanded'); 
-            }
+            if (data.tasks.length > 3) { badge.style.display = 'flex'; badge.innerText = data.tasks.length; }
+            else { badge.style.display = 'none'; isExpanded = false; document.getElementById('extra-tasks-container').classList.remove('expanded'); }
 
             data.tasks.forEach((t, i) => {
                 const div = document.createElement('div');
                 div.className = `task-item ${t.isDone?'done':''} ${syncingTaskNames.has(t.name)?'syncing':''}`;
-                
-                div.onclick = (e) => {
-                    if(e.target.tagName!=='BUTTON' && !syncingTaskNames.has(t.name)){
-                        if(navigator.vibrate) navigator.vibrate(10);
-                        div.classList.toggle('done'); 
-                        div.classList.add('syncing');
-                        syncingTaskNames.add(t.name); 
-                        toggleTask(t.name, !t.isDone);
-                    }
-                };
-                
+                div.onclick = (e) => { if(e.target.tagName!=='BUTTON' && !syncingTaskNames.has(t.name)){ if(navigator.vibrate) navigator.vibrate(10); div.classList.toggle('done'); div.classList.add('syncing'); syncingTaskNames.add(t.name); toggleTask(t.name, !t.isDone); }};
                 const cbContent = (i < 3) ? `<span>${i+1}</span>` : ""; 
                 div.innerHTML = `<div class="task-checkbox">${cbContent}</div><div class="task-content"><h4>${t.name}</h4><p>${t.note||''}</p></div><button class="edit-btn" onclick="event.stopPropagation();editNote('${t.name}','${t.note||''}')">✎</button>`;
-                
                 if (i < 3) topList.appendChild(div); else extraList.appendChild(div);
             });
         }
 
         function renderAbility(data) {
-            const stage = document.getElementById('galaxy-stage');
-            stage.innerHTML = ''; 
-
+            const stage = document.getElementById('galaxy-stage'); stage.innerHTML = ''; 
             document.getElementById('ability-token-display').innerText = `持有代幣: ${userWallet}`;
-
-            let alloyCount = 0;
-            let starCount = 0;
-
+            let ac = 0, sc = 0;
             data.abilities.forEach(a => {
                 const div = document.createElement('div');
                 div.onclick = () => selectNode(a, div);
-                
-                if (a.type === 'Alloy' && alloyCount < alloySlots.length) {
+                if (a.type === 'Alloy' && ac < alloySlots.length) {
                     const color = getAlloyColor(a.tokens); 
-                    
                     div.className = 'galaxy-node alloy-node-style';
-                    div.style.cssText = `${alloySlots[alloyCount]} border-color:${color.border}; box-shadow:0 4px 20px ${color.shadow};`;
+                    div.style.cssText = `${alloySlots[ac]} border-color:${color.border}; box-shadow:0 4px 20px ${color.shadow};`;
                     div.innerHTML = `<div class="alloy-content"><h4>${a.name}</h4><span>LV.${a.level}</span></div>`;
-                    alloyCount++;
-                
-                } else if (a.type === 'Star' && starCount < starSlots.length) {
+                    ac++;
+                } else if (a.type === 'Star' && sc < starSlots.length) {
                     const opacity = Math.min(0.4 + (a.tokens/500), 1); 
-                    
                     const styleClass = a.isActive ? 'star-node-style' : 'star-node-style empty';
                     div.className = `galaxy-node ${styleClass}`;
-                    div.style.cssText = `${starSlots[starCount]} opacity:${opacity};`;
+                    div.style.cssText = `${starSlots[sc]} opacity:${opacity};`;
                     div.innerHTML = a.isActive ? a.name.substring(0,2) : '';
-                    starCount++;
+                    sc++;
                 }
-                
                 stage.appendChild(div);
             });
         }
 
-        function selectNode(ability, el) {
-            if (!ability.isActive) return; 
-            selectedNode = ability;
-            
+        function selectNode(a, el) {
+            if (!a.isActive) return; 
+            selectedNode = a;
             document.querySelectorAll('.galaxy-node').forEach(n => n.classList.remove('selected'));
             el.classList.add('selected');
-            
-            document.getElementById('sel-name').innerText = ability.name;
-            document.getElementById('sel-stat').innerHTML = `<span>LV.${ability.level}</span> <span>•</span> <span>${ability.tokens} pts</span>`;
-            
+            document.getElementById('sel-name').innerText = a.name;
+            document.getElementById('sel-stat').innerHTML = `<span>LV.${a.level}</span> <span>•</span> <span>${a.tokens} pts</span>`;
             const btn = document.getElementById('invest-btn');
             btn.classList.remove('disabled');
             btn.innerText = "長按投入代幣";
         }
 
-        // 校準互動
         async function openCalibrate() {
-            if(!selectedNode) { 
-                alert("請先選擇一個能力"); 
-                return; 
-            }
-            if(selectedNode.initial > 0) { 
-                alert("此能力已完成初始校準 (Locked)。\n請透過每日任務累積代幣。"); 
-                return; 
-            }
-            
+            if(!selectedNode) { alert("請先選擇一個能力"); return; }
+            if(selectedNode.initial > 0) { alert("此能力已完成初始校準 (Locked)。\n請透過每日任務累積代幣。"); return; }
             const lvl = prompt(`【初始校準】\n設定 ${selectedNode.name} 的當前等級 (1-10)：`);
             if(lvl && !isNaN(lvl) && lvl>=1 && lvl<=10) {
                 if(confirm(`確定要將等級設定為 Lv.${lvl} 嗎？\n(設定後將鎖定初始值)`)) {
                     document.getElementById('invest-btn').innerText = "校準中...";
                     await fetch(`${currentApiUrl}?action=calibrateLevel&slotId=${selectedNode.slotId}&targetLevel=${lvl}`);
-                    loadData(currentDateStr, true);
+                    // [FIX] 強制重置介面，防止卡住
                     alert("校準完成！");
+                    document.getElementById('invest-btn').innerText = "長按投入代幣";
+                    loadData(currentDateStr, true);
                 }
-            } else if (lvl) { 
-                alert("請輸入有效的等級 (1-10)"); 
-            }
+            } else if (lvl) { alert("請輸入有效的等級 (1-10)"); }
         }
 
         function startCharge() {
             if (!selectedNode || userWallet <= 0) return;
             if(navigator.vibrate) navigator.vibrate(20); 
-            
             const btn = document.getElementById('invest-btn');
-            btn.style.transform = 'scale(0.95)'; 
-            tempInvested = 0;
-            
+            btn.style.transform = 'scale(0.95)'; tempInvested = 0;
             chargeInterval = setInterval(() => {
                 if (userWallet > 0) {
-                    userWallet--;
-                    selectedNode.tokens++;
-                    tempInvested++;
-                    
+                    userWallet--; selectedNode.tokens++; tempInvested++;
                     document.getElementById('ability-token-display').innerText = `持有代幣: ${userWallet}`;
                     document.getElementById('sel-stat').innerHTML = `<span>LV.${selectedNode.level}</span> <span>•</span> <span>${selectedNode.tokens} pts</span>`;
-                    
                     if(tempInvested % 5 === 0 && navigator.vibrate) navigator.vibrate(5);
-                } else {
-                    endCharge(); 
-                }
+                } else { endCharge(); }
             }, 50); 
         }
 
         async function endCharge() {
             if (!chargeInterval) return; 
-            clearInterval(chargeInterval);
-            chargeInterval = null;
+            clearInterval(chargeInterval); chargeInterval = null;
             document.getElementById('invest-btn').style.transform = 'scale(1)';
-            
             if (tempInvested > 0) {
                 const btn = document.getElementById('invest-btn');
                 btn.innerText = "同步中...";
                 await fetch(`${currentApiUrl}?action=investTokens&slotId=${selectedNode.slotId}&amount=${tempInvested}`);
-                btn.innerText = "長按投入代幣";
-                tempInvested = 0;
+                btn.innerText = "長按投入代幣"; tempInvested = 0;
                 loadData(currentDateStr, true); 
             }
         }
 
-        async function toggleTask(n, s) { 
-            await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`); 
-            setTimeout(()=>{
-                syncingTaskNames.delete(n); 
-                loadData(currentDateStr, true);
-            },500); 
-        }
-
-        async function editNote(n, o) { 
-            const v = prompt("編輯備註:", o); 
-            if(v !== null) { 
-                await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&note=${encodeURIComponent(v)}`); 
-                loadData(currentDateStr); 
-            } 
-        }
-
-        async function openAddTask() { 
-            const v = prompt("新增任務:"); 
-            if(v) { 
-                await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(v)}`); 
-                loadData(currentDateStr); 
-            } 
-        }
-
-        async function saveBreatheThought() { 
-            const i = document.getElementById('breathe-input'); 
-            if(i.value){ 
-                await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent("[呼吸日記] "+i.value)}`); 
-                i.value=''; 
-                loadData(currentDateStr); 
-                alert("想法已收藏"); 
-            } 
-        }
+        async function toggleTask(n, s) { await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`); setTimeout(()=>{syncingTaskNames.delete(n); loadData(currentDateStr, true);},500); }
+        async function editNote(n, o) { const v = prompt("編輯備註:", o); if(v !== null) { await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&note=${encodeURIComponent(v)}`); loadData(currentDateStr); } }
+        async function openAddTask() { const v = prompt("新增任務:"); if(v) { await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(v)}`); loadData(currentDateStr); } }
+        async function saveBreatheThought() { const i = document.getElementById('breathe-input'); if(i.value){ await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent("[呼吸日記] "+i.value)}`); i.value=''; loadData(currentDateStr); alert("想法已收藏"); } }
         
-        let startY = 0; 
-        const sc = document.getElementById('scroll-container'); 
-        const pi = document.getElementById('pull-indicator');
-        
+        let startY = 0; const sc = document.getElementById('scroll-container'), pi = document.getElementById('pull-indicator');
         sc.addEventListener('touchstart', e => { startY = e.touches[0].pageY });
-        
-        sc.addEventListener('touchmove', e => {
-            const dist = e.touches[0].pageY - startY;
-            if(sc.scrollTop === 0 && dist > 0) { 
-                sc.style.transform = `translateY(${Math.min(dist/2, 60)}px)`; 
-                pi.innerText = dist > 100 ? "放開更新" : "下拉..."; 
-            }
-        });
-        
-        sc.addEventListener('touchend', () => {
-             if(new WebKitCSSMatrix(getComputedStyle(sc).transform).m42 > 50) {
-                 loadData(currentDateStr);
-             }
-             sc.style.transform = 'translateY(0)';
-        });
+        sc.addEventListener('touchmove', e => { const dist = e.touches[0].pageY - startY; if(sc.scrollTop === 0 && dist > 0) { sc.style.transform = `translateY(${Math.min(dist/2, 60)}px)`; pi.innerText = dist > 100 ? "放開更新" : "下拉..."; } });
+        sc.addEventListener('touchend', () => { if(new WebKitCSSMatrix(getComputedStyle(sc).transform).m42 > 50) { loadData(currentDateStr); } sc.style.transform = 'translateY(0)'; });
     </script>
 </body>
 </html>
