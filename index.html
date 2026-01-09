@@ -274,7 +274,7 @@
         // ==========================================
         const CACHE_KEY = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY);
-        let currentDateStr = new Date().toISOString().split('T')[0];
+        let currentDateStr = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
         let currentRhythm = localStorage.getItem('user_rhythm') || 'sprint';
         let globalData = null;
         let syncingTaskNames = new Set();
@@ -361,7 +361,8 @@
             const d = new Date(currentDateStr); d.setDate(d.getDate()+n); 
             currentDateStr = d.toISOString().split('T')[0]; loadData(currentDateStr); 
         }
-        function goToday() { currentDateStr = new Date().toISOString().split('T')[0]; loadData(currentDateStr); }
+        function goToday() { currentDateStr = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]; 
+    loadData(currentDateStr); }
         function toggleExpand() {
             isExpanded = !isExpanded;
             const c = document.getElementById('extra-tasks-container'), b = document.getElementById('workload-badge');
