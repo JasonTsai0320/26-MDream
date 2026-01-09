@@ -8,7 +8,7 @@
         :root {
             --primary: #4A90E2; --gold: #C1A258; --bg: #F5F5F7; --card: #FFFFFF;
             --text-main: #1D1D1F; --text-sub: #86868B; --text-light: #C7C7CC;
-            /* v5.10 三色預警配色 */
+            /* 三色預警配色 */
             --status-green: #84A59D; --status-amber: #E67E22;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -20,58 +20,59 @@
         .app-container {
             width: 100%; max-width: 480px; background-color: var(--bg); height: 100%; 
             display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            overflow-y: auto; transition: transform 0.2s;
+            overflow-y: auto; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .view { display: none; width: 100%; flex-direction: column; padding: 20px; }
         .view.active { display: flex; }
 
-        /* === Header (v5.7) === */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; padding-left: 4px; padding-right: 4px;}
-        .header-date { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; height: 64px; gap: 2px; }
+        /* === 下拉更新提示 (v5.7) === */
+        #pull-indicator { 
+            position: absolute; top: -50px; left: 0; width: 100%; height: 50px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 13px; color: var(--text-sub); font-weight: 500;
+        }
+
+        /* === Header 佈局 (v5.7) === */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 4px 0 4px; }
+        .header-date { display: flex; flex-direction: column; gap: 2px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; }
         .header-date span { font-size: 15px; font-weight: 600; }
-        .badge-ring { width: 64px; height: 64px; } 
-        .header-countdown { text-align: right; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; height: 64px; gap: 2px; }
-        .count-num { font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
-        .count-label { font-size: 13px; font-weight: 500; }
-        .not-today .header-date h1, .not-today .header-date span, .not-today .count-num, .not-today .count-label { color: var(--text-light) !important; }
+        .header-countdown { text-align: right; }
+        .count-num { font-size: 36px; font-weight: 800; line-height: 1; color: var(--primary); }
+        .count-label { font-size: 13px; font-weight: 500; color: var(--text-sub); }
+        .badge-ring { width: 64px; height: 64px; }
+        .not-today * { color: var(--text-light) !important; }
 
-        /* === 卡片與美學 (v5.9) === */
+        /* === 專注卡片與對齊樣式 (v5.9 & v5.10) === */
         .main-card { background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 20px; }
-        .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
         
-        /* 數值對齊專用樣式 (v5.9) */
+        /* 精密對齊專用 (v5.9) */
         .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
         .invisible-decimal { visibility: hidden; }
 
         .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
-        .bar-chart-fill { height: 100%; border-radius: 5px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bar-chart-fill { height: 100%; border-radius: 5px; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* === 任務區 (v5.7) === */
-        .tasks-section { margin-bottom: 10px; flex-grow: 1; }
-        .tasks-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
-        .tasks-header { font-size: 20px; font-weight: 800; color: var(--text-main); }
-        .add-task-inline { width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary); color: white; border: none; font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3); }
-        .task-item { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 10px; display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-        .task-number { width: 26px; height: 26px; border: 2px solid #DDD; border-radius: 50%; margin-right: 12px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--text-sub); }
+        /* === 任務清單 (v5.7) === */
+        .task-item { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 10px; display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s; }
+        .task-number { width: 26px; height: 26px; border: 2px solid #DDD; border-radius: 50%; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--text-sub); margin-top: 2px; }
         .task-item.done .task-number { background-color: var(--primary); border-color: var(--primary); color: white; }
-        .task-item.done .task-content h4 { text-decoration: line-through; color: #BBB; }
-        .task-content h4 { margin: 0; font-size: 16px; font-weight: 600; }
-        .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); font-style: italic;}
+        .task-item.done h4 { text-decoration: line-through; color: #BBB; }
+        .task-content h4 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.4; }
+        .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); font-style: italic; }
         .edit-btn { background: none; border: none; color: #DDD; font-size: 18px; padding: 8px; cursor: pointer; margin-left: auto; }
 
-        .quote-area { text-align: center; margin: 20px 0; color: var(--gold); font-family: "Georgia", serif; font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; }
-        
-        /* === Footer 導航 (v5.7) === */
-        .footer-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 40px; border-top: 1px solid #EEE; padding-top: 20px; }
-        .nav-btn { background: none; border: none; font-size: 15px; color: var(--primary); font-weight: 800; cursor: pointer; min-width: 70px; }
-        .nav-center-btn { background: none; border: none; font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px 12px; transition: 0.3s; }
-        .is-today-label { color: var(--text-main); cursor: default; }
-        .back-to-today-btn { color: var(--text-light); }
+        .quote-area { text-align: center; margin: 20px 0; color: var(--gold); font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; line-height: 1.6; }
 
-        /* === 載入與下拉效果 (v5.7) === */
-        #pull-indicator { position: absolute; top: -50px; left: 0; width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-sub); }
+        /* === Footer 導覽 (v5.7) === */
+        .footer-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 40px; border-top: 1px solid #EEE; padding-top: 20px; }
+        .nav-btn { background: none; border: none; font-size: 15px; color: var(--primary); font-weight: 800; cursor: pointer; min-width: 60px; }
+        .nav-center-btn { background: none; border: none; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-light); }
+        .is-today-label { color: var(--text-main); font-weight: 800; cursor: default; }
+
+        /* === Loading Overlay === */
         #loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
         .spinner { width: 40px; height: 40px; border: 4px solid #DDD; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -83,27 +84,24 @@
         <div id="loading-overlay"><div class="spinner"></div></div>
         
         <div id="setup-view" class="view">
-            <h1 style="color:var(--primary); margin-bottom: 10px;">Dream Machine</h1>
-            <input type="url" id="api-url-input" placeholder="貼上 API 網址" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;"/>
-            <button style="background:var(--primary); color:white; border:none; padding:16px; border-radius:12px; width:100%; font-weight:600;" onclick="startApp()">啟動</button>
+            <h1>Dream Machine</h1>
+            <input type="url" id="api-url-input" placeholder="貼上 API 網址" style="padding:14px; width:100%; border-radius:12px; border:1px solid #ddd; margin-bottom:12px;"/>
+            <button onclick="startApp()" style="background:var(--primary); color:white; border:none; padding:18px; border-radius:14px; width:100%; font-weight:700; font-size:16px;">啟動夢想機</button>
         </div>
 
         <div id="main-view" class="view">
             <header id="app-header">
-                <div class="header-date">
-                    <h1 id="display-date">--/--</h1>
-                    <span id="display-weekday">--</span>
-                </div>
-                <div class="header-center" id="header-main-goal"></div>
-                <div class="header-countdown" id="header-countdown"></div>
+                <div class="header-date"><h1 id="display-date">--/--</h1><span id="display-weekday">--</span></div>
+                <div id="header-ring"></div>
+                <div id="header-countdown"></div>
             </header>
 
             <div id="main-goal-card" class="main-card"></div>
 
             <div class="tasks-section">
-                <div class="tasks-header-row">
-                    <div class="tasks-header">今日任務</div>
-                    <button class="add-task-inline" onclick="openAddTask()">+</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+                    <div style="font-size:22px; font-weight:900; letter-spacing:-0.5px;">今日任務</div>
+                    <button onclick="openAddTask()" style="width:34px; height:34px; border-radius:50%; background:var(--primary); color:white; border:none; font-size:24px; font-weight:bold; box-shadow:0 4px 10px rgba(74,144,226,0.3);">+</button>
                 </div>
                 <div id="tasks-list"></div>
             </div>
@@ -111,9 +109,9 @@
             <div id="daily-quote" class="quote-area"></div>
 
             <div class="footer-nav">
-                <button class="nav-btn" onclick="changeDate(-1)">◀ 昨日</button>
+                <button class="nav-btn" onclick="changeDate(-1)">昨日</button>
                 <button id="nav-center-action" class="nav-center-btn" onclick="goToday()">今 日</button>
-                <button class="nav-btn" onclick="changeDate(1)">明日 ▶</button>
+                <button class="nav-btn" onclick="changeDate(1)">明日</button>
             </div>
         </div>
     </div>
@@ -124,129 +122,99 @@
         function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
         let currentDateStr = getTodayStr();
 
-        // [核心邏輯：隱形對齊美學 (v5.9)]
+        // [精密格式化：隱形對齊美學 (v5.9)]
         function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
             if (unit === "%") {
                 if (num > 0 && num < 1) num = num * 100;
                 let fixed = num.toFixed(1);
-                if (!isCurrent && fixed.endsWith(".0")) {
-                    return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
-                }
+                if (!isCurrent && fixed.endsWith(".0")) return `${Math.round(num)}<span class="invisible-decimal">.0</span>`;
                 return fixed;
             }
-            if (num >= 1000) return (num/1000).toFixed(1) + 'k';
-            return num.toLocaleString();
+            return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString();
         }
 
-        // [核心邏輯：三色預警 (v5.10)]
+        // [三色預警系統：25% 門檻 (v5.10)]
         function getStatusColor(current, total, direction) {
             const blue = "#4A90E2"; const green = "#84A59D"; const amber = "#E67E22";
             if (!total || !direction) return blue;
             const ratio = current / total;
             if (direction.includes("向下")) {
-                if (ratio >= 1.25) return amber; // 超過 25% 警示
-                if (ratio <= 0.75) return green; // 低於 25% 優秀
+                if (ratio >= 1.25) return amber; // 琥珀橙
+                if (ratio <= 0.75) return green; // 鼠尾草綠
             } else if (direction.includes("向上")) {
-                if (ratio >= 1.25) return green; // 超過 25% 優秀
-                if (ratio <= 0.75) return amber; // 低於 25% 警示
+                if (ratio >= 1.25) return green;
+                if (ratio <= 0.75) return amber;
             }
             return blue;
         }
 
-        // [下拉更新 & 自動喚醒 (v5.7)]
-        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr); });
+        // [下拉更新 & 自動刷新邏輯 (v5.7)]
         let startY = 0;
         const scrollContainer = document.getElementById('scroll-container');
         const pullIndicator = document.getElementById('pull-indicator');
         scrollContainer.addEventListener('touchstart', (e) => { startY = e.touches[0].pageY; });
         scrollContainer.addEventListener('touchmove', (e) => {
-            const y = e.touches[0].pageY; const pullDistance = y - startY;
-            if (scrollContainer.scrollTop === 0 && pullDistance > 0) {
-                const move = Math.min(pullDistance / 2, 60);
+            const y = e.touches[0].pageY; const pullDist = y - startY;
+            if (scrollContainer.scrollTop === 0 && pullDist > 0) {
+                const move = Math.min(pullDist / 2, 60);
                 scrollContainer.style.transform = `translateY(${move}px)`;
                 pullIndicator.innerText = move > 50 ? "放開以更新..." : "繼續下拉...";
             }
         });
         scrollContainer.addEventListener('touchend', () => {
             if (scrollContainer.scrollTop === 0) {
-                const currentTransform = new WebKitCSSMatrix(getComputedStyle(scrollContainer).transform).m42;
-                if (currentTransform > 50) loadData(currentDateStr);
+                const matrix = new WebKitCSSMatrix(getComputedStyle(scrollContainer).transform);
+                if (matrix.m42 > 50) loadData(currentDateStr);
                 scrollContainer.style.transform = 'translateY(0)';
             }
         });
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr); });
 
-        // [初始化與啟動]
-        function init() { if (currentApiUrl) { showView('main-view'); loadData(currentDateStr); } else { showView('setup-view'); } }
-        async function startApp() {
-            const url = document.getElementById('api-url-input').value.trim();
-            if (!url.includes('script.google.com')) return alert("網址錯誤");
-            showLoading(true);
-            try { await fetch(`${url}?action=getData`); localStorage.setItem(CACHE_KEY_URL, url); currentApiUrl = url; goToday(); showView('main-view'); } 
-            catch (e) { alert("連線失敗"); } finally { showLoading(false); }
-        }
-
+        // [數據載入與渲染]
         async function loadData(date) {
             updateDateUI(date); showLoading(true);
             try {
-                const response = await fetch(`${currentApiUrl}?action=getData&date=${date}`);
-                const json = await response.json();
+                const resp = await fetch(`${currentApiUrl}?action=getData&date=${date}`);
+                const json = await resp.json();
                 if (json.status === 'success') renderDashboard(json.data);
-            } catch (e) { console.error(e); } finally { showLoading(false); }
-        }
-
-        function changeDate(delta) {
-            const d = new Date(currentDateStr); d.setDate(d.getDate() + delta);
-            currentDateStr = d.toISOString().split('T')[0]; loadData(currentDateStr);
-        }
-        function goToday() { currentDateStr = getTodayStr(); loadData(currentDateStr); }
-
-        function updateDateUI(dateStr) {
-            const d = new Date(dateStr); const realTodayStr = getTodayStr(); const isToday = dateStr === realTodayStr;
-            const centerBtn = document.getElementById('nav-center-action');
-            if (isToday) { 
-                centerBtn.innerText = "今 日"; centerBtn.className = "nav-center-btn is-today-label"; centerBtn.onclick = null; 
-                document.getElementById('app-header').classList.remove('not-today');
-            } else { 
-                centerBtn.innerText = "回今日"; centerBtn.className = "nav-center-btn back-to-today-btn"; centerBtn.onclick = goToday; 
-                document.getElementById('app-header').classList.add('not-today');
-            }
-            document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`;
-            const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            document.getElementById('display-weekday').innerText = `( ${days[d.getDay()]} )`;
+            } catch (e) { alert("連線失敗，請檢查網址或權限"); } finally { showLoading(false); }
         }
 
         function renderDashboard(data) {
             document.getElementById('daily-quote').innerText = data.quote || "";
-            const headerTitleEl = document.getElementById('header-main-goal');
-            const headerCountEl = document.getElementById('header-countdown');
             const mainCardEl = document.getElementById('main-goal-card');
+            const countdownEl = document.getElementById('header-countdown');
+            const ringEl = document.getElementById('header-ring');
             
+            let countdownGoal = data.goals.find(g => g.unit === '天');
             let ringGoal = data.goals.find(g => g.type === 'ring');
-            let barGoal = data.goals.find(g => g.type === 'bar' || !g.type);
-            let countdownGoal = data.goals.find(g => g.unit === "天");
+            let barGoal = data.goals.find(g => g.tag === 'S_Goal');
 
-            if (ringGoal) {
-                let percent = ringGoal.total > 0 ? Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100)) : 0;
-                headerTitleEl.innerHTML = `<svg class="badge-ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="#F7FBFF" /><circle cx="32" cy="32" r="28" stroke="#4A90E2" stroke-width="5" fill="none" stroke-dasharray="176 176" style="stroke-dashoffset: ${176 * (1 - percent/100)}" stroke-linecap="round" transform="rotate(-90 32 32)" /><text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" font-size="24" font-weight="900" fill="#4A90E2">${percent}%</text><text x="50%" y="72%" dominant-baseline="middle" text-anchor="middle" font-size="9" font-weight="600" fill="#999">${ringGoal.name.substring(0,4)}</text></svg>`;
-            }
             if (countdownGoal) {
-                const isToday = currentDateStr === getTodayStr();
-                headerCountEl.innerHTML = `<div class="count-num" style="color: ${isToday ? 'var(--primary)' : 'var(--text-light)'}">${countdownGoal.total - countdownGoal.current}</div><div class="count-label">倒數天數</div>`;
+                const count = countdownGoal.total - countdownGoal.current;
+                countdownEl.innerHTML = `<div class="count-num">${count}</div><div class="count-label">倒數天數</div>`;
+            }
+            if (ringGoal) {
+                let p = Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100)) || 0;
+                ringEl.innerHTML = `<svg class="badge-ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="none"/><circle cx="32" cy="32" r="28" stroke="#4A90E2" stroke-width="5" fill="none" stroke-dasharray="176" style="stroke-dashoffset:${176*(1-p/100)}" transform="rotate(-90 32 32)"/><text x="50%" y="55%" text-anchor="middle" font-size="20" font-weight="900" fill="#4A90E2">${p}%</text></svg>`;
             }
             if (barGoal) {
+                const color = getStatusColor(barGoal.current, barGoal.total, barGoal.direction);
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
-                const activeColor = getStatusColor(barGoal.current, barGoal.total, barGoal.direction);
                 mainCardEl.innerHTML = `
                     <div class="bar-wrapper">
-                        <div class="bar-label"><span>現況</span><span style="color:${activeColor}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color: ${activeColor};"></div></div>
+                        <div class="bar-label"><span>現況</span><span style="color:${color}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color:${color};"></div></div>
                         <div class="bar-label"><span>目標</span><span style="color:var(--gold);"><span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color: var(--gold);"></div></div>
+                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color:var(--gold);"></div></div>
                     </div>
                     <h3 class="card-title">${barGoal.name}</h3>`;
+            } else {
+                mainCardEl.innerHTML = `<div style="color:#BBB; padding:20px;">請在試算表中設定標籤為 S_Goal 的目標</div>`;
             }
+
             const taskList = document.getElementById('tasks-list');
             taskList.innerHTML = '';
             data.tasks.forEach((t, i) => {
@@ -258,23 +226,16 @@
             });
         }
 
-        async function toggleTask(name, status) {
-            await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&isDone=${status}`);
-            loadData(currentDateStr);
-        }
-        async function editNote(name, old) {
-            const note = prompt("輸入備註：", old); if (note === null) return;
-            await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(name)}&note=${encodeURIComponent(note)}`);
-            loadData(currentDateStr);
-        }
-        async function openAddTask() {
-            const name = prompt("任務名稱："); if (!name) return;
-            await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(name)}`);
-            loadData(currentDateStr);
-        }
-        function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        async function toggleTask(n, s) { await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`); loadData(currentDateStr); }
+        async function editNote(n, o) { const nt = prompt("輸入備註：", o); if (nt === null) return; await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&note=${encodeURIComponent(nt)}`); loadData(currentDateStr); }
+        async function openAddTask() { const n = prompt("任務名稱："); if (!n) return; await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}`); loadData(currentDateStr); }
+        function updateDateUI(ds) { const d = new Date(ds); document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`; const dy=['週日','週一','週二','週三','週四','週五','週六']; document.getElementById('display-weekday').innerText = `( ${dy[d.getDay()]} )`; const ist = ds === getTodayStr(); document.getElementById('app-header').className = ist ? '' : 'not-today'; const btn = document.getElementById('nav-center-action'); if(ist){ btn.innerText="今 日"; btn.className="nav-center-btn is-today-label"; btn.onclick=null; }else{ btn.innerText="回今日"; btn.className="nav-center-btn"; btn.onclick=goToday; } }
+        function changeDate(n) { const d = new Date(currentDateStr); d.setDate(d.getDate()+n); currentDateStr=d.toISOString().split('T')[0]; loadData(currentDateStr); }
+        function goToday() { currentDateStr=getTodayStr(); loadData(currentDateStr); }
         function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? 'flex' : 'none'; }
-        init();
+        function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        async function startApp() { const u = document.getElementById('api-url-input').value.trim(); if(!u.includes('script.google.com')) return alert("網址無效"); currentApiUrl = u; localStorage.setItem(CACHE_KEY_URL, u); showView('main-view'); loadData(currentDateStr); }
+        if (currentApiUrl) { showView('main-view'); loadData(currentDateStr); } else { showView('setup-view'); }
     </script>
 </body>
 </html>
