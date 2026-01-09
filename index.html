@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我的夢想機 Dream Machine v5.11.3 Flagship Edition</title>
+    <title>我的夢想機 Dream Machine v5.11.4 Flagship</title>
     <style>
         /* =========================================
-           1. 核心配色與變數定義
+           1. 核心配色與變數
            ========================================= */
         :root {
             --primary: #4A90E2;    /* 專業穩定藍 */
@@ -14,14 +14,14 @@
             --bg: #F5F5F7;         /* 蘋果灰底 */
             --card: #FFFFFF;       /* 純白卡片 */
             --text-main: #1D1D1F;  /* 核心文字 */
-            --text-sub: #86868B;   /* 次要文字 */
+            --text-sub: #86868B;   /* 次要文字 - v5.11.4 用於加深序號 */
             --text-light: #D1D1D6; /* 極淡裝飾 */
-            --status-green: #84A59D; /* 鼠尾草綠 (優秀) */
-            --status-amber: #E67E22; /* 琥珀橙 (警示) */
+            --status-green: #84A59D; /* 鼠尾草綠 */
+            --status-amber: #E67E22; /* 琥珀橙 */
         }
 
         /* =========================================
-           2. 全域基礎樣式與美學設定
+           2. 全域基礎美學設定
            ========================================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { 
@@ -47,7 +47,7 @@
         .view.active { display: flex; }
 
         /* =========================================
-           3. UI 元件樣式 (Header, Card, Goal)
+           3. UI 元件 (Header, Card)
            ========================================= */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 4px 0 4px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; }
@@ -58,23 +58,24 @@
         .badge-ring { width: 64px; height: 64px; }
         .not-today * { color: var(--text-light) !important; }
 
-        /* 精密對齊大卡片 (v5.9 & v5.10) */
+        /* 精密對齊卡片 (v5.9 & v5.10) */
         .main-card { background: var(--card); border-radius: 24px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 20px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
         
-        /* 隱形對齊美學專用 */
         .value-display { font-family: "Monaco", "Consolas", monospace; text-align: right; display: inline-block; }
-        .invisible-decimal { visibility: hidden; } 
+        .invisible-decimal { visibility: hidden; } /* v5.9 修復百分比對齊 */
 
         .bar-chart-bg { width: 100%; background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 16px; }
         .bar-chart-fill { height: 100%; border-radius: 5px; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* =========================================
-           4. 任務清單樣式 (v5.11.x)
+           4. 任務清單 (v5.11.4 精調)
            ========================================= */
         .tasks-header-row { display: flex; align-items: center; margin-bottom: 18px; }
         .tasks-header { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+        
+        /* 智慧工作量指標 */
         .workload-badge { 
             width: 22px; height: 22px; background: #E5E5EA; color: var(--text-sub); 
             font-size: 12px; font-weight: 800; border-radius: 50%; 
@@ -87,6 +88,7 @@
             display: flex; align-items: flex-start; box-shadow: 0 2px 6px rgba(0,0,0,0.02); 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
         }
+        
         /* v5.11.3: 防誤觸同步狀態樣式 */
         .task-item.syncing { opacity: 0.5; pointer-events: none; filter: grayscale(50%); } 
 
@@ -94,7 +96,7 @@
             width: 24px; height: 24px; border: 2px solid #E5E5EA; border-radius: 50%; 
             margin-right: 14px; flex-shrink: 0; margin-top: 2px; 
             display: flex; align-items: center; justify-content: center; 
-            font-size: 11px; font-weight: 700; color: var(--text-light); transition: 0.2s;
+            font-size: 12px; font-weight: 800; color: var(--text-sub); transition: 0.2s; /* v5.11.4 加深顏色 */
         }
         .task-item.done .task-checkbox { background-color: var(--primary); border-color: var(--primary); color: white; }
         .task-item.done .task-checkbox::after { content: '✔'; }
@@ -105,12 +107,16 @@
         .task-content h4 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--text-main); }
         .task-content p { margin: 4px 0 0 0; font-size: 13px; color: var(--text-sub); font-style: italic; }
 
-        .edit-btn { background: none; border: none; color: #D1D1D6; font-size: 16px; padding: 8px; cursor: pointer; transition: 0.2s; opacity: 0.5; }
+        /* 隱形鉛筆 */
+        .edit-btn { background: none; border: none; color: #86868B; font-size: 16px; padding: 8px; cursor: pointer; transition: 0.2s; opacity: 0.4; margin-left: auto; align-self: center; }
         .edit-btn:active { color: var(--primary); opacity: 1; }
 
         .extra-tasks-container { overflow: hidden; transition: max-height 0.4s ease-out; max-height: 0; }
         .extra-tasks-container.expanded { max-height: 1200px; }
 
+        /* =========================================
+           5. 頁尾與載入
+           ========================================= */
         .quote-area { text-align: center; margin: 24px 0; color: var(--gold); font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; line-height: 1.5; }
         .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 40px 0; border-top: 1px solid #EEE; }
         .nav-btn { background: none; border: none; font-size: 15px; color: var(--primary); font-weight: 800; cursor: pointer; min-width: 60px; }
@@ -161,17 +167,15 @@
 
     <script>
         // =========================================
-        // 5. JavaScript 核心引擎 (v5.11.3)
+        // 6. JavaScript 核心引擎 (v5.11.4)
         // =========================================
         const CACHE_KEY_URL = 'dream_machine_api_url';
         let currentApiUrl = localStorage.getItem(CACHE_KEY_URL);
         let currentDateStr = new Date().toISOString().split('T')[0];
         let isExpanded = false;
-        let syncingTaskNames = new Set(); // 追蹤正在同步的任務名稱
+        let syncingTaskNames = new Set(); // 追蹤同步中任務
 
-        /** * [v5.9 精密對齊格式化] 
-         * 處理 .0 隱形佔位邏輯
-         */
+        /** [v5.9 精密對齊] 處理 .0 隱形佔位 */
         function smartFormat(val, unit, isCurrent) {
             if (!val && val !== 0) return '0';
             let num = parseFloat(val);
@@ -184,16 +188,14 @@
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num.toLocaleString();
         }
 
-        /** * [v5.10 三色預警邏輯] 
-         * 根據方向判定 25% 門檻變色
-         */
+        /** [v5.10 三色預警] 25% 門檻判斷 */
         function getStatusColor(current, total, direction) {
             const blue = "#4A90E2", green = "#84A59D", amber = "#E67E22";
             if (!total || !direction) return blue;
             const ratio = current / total;
             if (direction.includes("向下")) {
-                if (ratio >= 1.25) return amber; // 超標警告
-                if (ratio <= 0.75) return green; // 超前優秀
+                if (ratio >= 1.25) return amber; 
+                if (ratio <= 0.75) return green; 
             } else if (direction.includes("向上")) {
                 if (ratio >= 1.25) return green;
                 if (ratio <= 0.75) return amber;
@@ -201,9 +203,7 @@
             return blue;
         }
 
-        /** * [v5.7 下拉更新觸控監聽] 
-         * 模擬 iOS 彈跳感阻尼運算
-         */
+        /** [v5.7 下拉更新] 阻尼運算與監聽 */
         let startY = 0;
         const scrollContainer = document.getElementById('scroll-container');
         const pullIndicator = document.getElementById('pull-indicator');
@@ -224,7 +224,7 @@
             scrollContainer.style.transform = 'translateY(0)';
         });
         
-        /** [v5.7 自動刷新監聽] */
+        /** [v5.7 自動刷新] 喚醒監聽 */
         document.addEventListener('visibilitychange', () => { 
             if (document.visibilityState === 'visible' && currentApiUrl) loadData(currentDateStr, true); 
         });
@@ -245,49 +245,35 @@
             const container = document.getElementById('extra-tasks-container');
             const badge = document.getElementById('workload-badge');
             if (isExpanded) { 
-                container.classList.add('expanded'); 
-                badge.style.background = 'var(--primary)'; 
-                badge.style.color = 'white'; 
+                container.classList.add('expanded'); badge.style.background = 'var(--primary)'; badge.style.color = 'white'; 
             } else { 
-                container.classList.remove('expanded'); 
-                badge.style.background = '#E5E5EA'; 
-                badge.style.color = 'var(--text-sub)'; 
+                container.classList.remove('expanded'); badge.style.background = '#E5E5EA'; badge.style.color = 'var(--text-sub)'; 
             }
         }
 
-        /** [渲染戰略佈局] */
+        /** 渲染儀表板 */
         function renderDashboard(data) {
             document.getElementById('daily-quote').innerText = data.quote || "";
             const mainCardEl = document.getElementById('main-goal-card');
             const countdownEl = document.getElementById('header-countdown');
             const ringEl = document.getElementById('header-ring');
             
-            // 抓取各類別目標
             let countdownGoal = data.goals.find(g => g.unit === '天');
             let ringGoal = data.goals.find(g => g.type === 'ring');
             let barGoal = data.goals.find(g => g.tag === 'S_Goal');
 
-            // 渲染頂部 UI
             if (countdownGoal) countdownEl.innerHTML = `<div class="count-num">${countdownGoal.total - countdownGoal.current}</div><div class="count-label">倒數天數</div>`;
             if (ringGoal) {
                 let p = Math.min(100, Math.round((ringGoal.current / ringGoal.total) * 100)) || 0;
                 ringEl.innerHTML = `<svg class="badge-ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="#E8F1FA" stroke-width="5" fill="none"/><circle cx="32" cy="32" r="28" stroke="#4A90E2" stroke-width="5" fill="none" stroke-dasharray="176" style="stroke-dashoffset:${176*(1-p/100)}" transform="rotate(-90 32 32)"/><text x="50%" y="55%" text-anchor="middle" font-size="20" font-weight="900" fill="#4A90E2">${p}%</text></svg>`;
             }
 
-            // 渲染精密長條圖卡片 (v5.10)
             if (barGoal) {
                 const color = getStatusColor(barGoal.current, barGoal.total, barGoal.direction);
                 let max = Math.max(barGoal.current, barGoal.total) || 1;
-                mainCardEl.innerHTML = `
-                    <div class="bar-wrapper">
-                        <div class="bar-label"><span>現況</span><span style="color:${color}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color:${color};"></div></div>
-                        <div class="bar-label"><span>目標</span><span style="color:var(--gold);"><span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}</span></div>
-                        <div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color:var(--gold);"></div></div>
-                    </div><h3 class="card-title">${barGoal.name}</h3>`;
+                mainCardEl.innerHTML = `<div class="bar-wrapper"><div class="bar-label"><span>現況</span><span style="color:${color}; font-weight:800;"><span class="value-display">${smartFormat(barGoal.current, barGoal.unit, true)}</span> ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.current/max)*100}%; background-color:${color};"></div></div><div class="bar-label"><span>目標</span><span style="color:var(--gold);"><span class="value-display">${smartFormat(barGoal.total, barGoal.unit, false)}</span> ${barGoal.unit}</span></div><div class="bar-chart-bg"><div class="bar-chart-fill" style="width:${(barGoal.total/max)*100}%; background-color:var(--gold);"></div></div></div><h3 class="card-title">${barGoal.name}</h3>`;
             }
 
-            // 任務清單邏輯 (v5.11.x)
             const topList = document.getElementById('top-tasks-list');
             const extraList = document.getElementById('extra-tasks-list');
             const badge = document.getElementById('workload-badge');
@@ -302,81 +288,54 @@
                 const isSyncing = syncingTaskNames.has(t.name);
                 item.className = `task-item ${t.isDone ? 'done' : ''} ${isSyncing ? 'syncing' : ''}`;
                 
-                /** [v5.11.3: 防誤觸核心邏輯] */
                 item.onclick = (e) => { 
                     if(e.target.tagName !== 'BUTTON' && !syncingTaskNames.has(t.name)) {
-                        // 1. 物理震動回饋
-                        if (navigator.vibrate) navigator.vibrate(10);
-                        // 2. 樂觀 UI 同步變色
-                        item.classList.toggle('done'); 
-                        item.classList.add('syncing'); 
-                        // 3. 註冊同步狀態並鎖定
-                        syncingTaskNames.add(t.name);
-                        toggleTask(t.name, !t.isDone); 
+                        if (navigator.vibrate) navigator.vibrate(10); // 物理震動
+                        item.classList.toggle('done'); item.classList.add('syncing'); 
+                        syncingTaskNames.add(t.name); toggleTask(t.name, !t.isDone); 
                     }
                 };
                 
                 const checkboxContent = (i < 3) ? `<span>${i+1}</span>` : "";
                 item.innerHTML = `<div class="task-checkbox">${checkboxContent}</div><div class="task-content"><h4>${t.name}</h4><p>${t.note||''}</p></div><button class="edit-btn" onclick="event.stopPropagation(); editNote('${t.name}', '${t.note||''}')">✎</button>`;
-                
                 if (i < 3) topList.appendChild(item); else extraList.appendChild(item);
             });
         }
 
-        /** [v5.11.3: 帶有 800ms 冷卻期的背景同步] */
+        /** [v5.11.4: 500ms 背景同步] */
         async function toggleTask(n, s) { 
             try {
                 await fetch(`${currentApiUrl}?action=toggleTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&isDone=${s}`);
-                // 強制鎖定至少 800ms 以提供穩定視覺與後端緩衝
                 setTimeout(() => {
-                    syncingTaskNames.delete(n);
-                    loadData(currentDateStr, true); // 靜默刷新最終狀態
-                }, 800);
-            } catch (e) { 
-                alert("連線不穩，已恢復原始狀態"); 
-                syncingTaskNames.delete(n); 
-                loadData(currentDateStr); 
-            }
+                    syncingTaskNames.delete(n); loadData(currentDateStr, true); 
+                }, 500); // 冷卻時間優化為 500ms
+            } catch (e) { alert("連線不穩"); syncingTaskNames.delete(n); loadData(currentDateStr); }
         }
 
         async function editNote(n, o) { 
-            const nt = prompt("編輯備註：", o); 
-            if (nt === null) return; 
+            const nt = prompt("編輯備註：", o); if (nt === null) return; 
             await fetch(`${currentApiUrl}?action=updateNote&date=${currentDateStr}&taskName=${encodeURIComponent(n)}&note=${encodeURIComponent(nt)}`); 
             loadData(currentDateStr); 
         }
 
         async function openAddTask() { 
-            const n = prompt("新增任務名稱："); 
-            if (!n) return; 
+            const n = prompt("新增任務名稱："); if (!n) return; 
             await fetch(`${currentApiUrl}?action=addTask&date=${currentDateStr}&taskName=${encodeURIComponent(n)}`); 
             loadData(currentDateStr); 
         }
 
         function updateDateUI(ds) { 
-            const d = new Date(ds); 
-            document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`; 
-            const dy=['週日','週一','週二','週三','週四','週五','週六']; 
-            document.getElementById('display-weekday').innerText = `( ${dy[d.getDay()]} )`; 
+            const d = new Date(ds); document.getElementById('display-date').innerText = `${d.getMonth()+1}/${d.getDate()}`; 
+            const dy=['週日','週一','週二','週三','週四','週五','週六']; document.getElementById('display-weekday').innerText = `( ${dy[d.getDay()]} )`; 
             const ist = ds === new Date().toISOString().split('T')[0]; 
-            const btn = document.getElementById('nav-center-action'); 
-            btn.className = ist ? 'nav-center-btn is-today-label' : 'nav-center-btn'; 
-            btn.onclick = ist ? null : goToday; 
-            document.getElementById('app-header').className = ist ? '' : 'not-today'; 
+            const btn = document.getElementById('nav-center-action'); btn.className = ist ? 'nav-center-btn is-today-label' : 'nav-center-btn'; 
+            btn.onclick = ist ? null : goToday; document.getElementById('app-header').className = ist ? '' : 'not-today'; 
         }
 
-        function changeDate(n) { 
-            const d = new Date(currentDateStr); d.setDate(d.getDate()+n); 
-            currentDateStr=d.toISOString().split('T')[0]; loadData(currentDateStr); 
-        }
-
-        function goToday() { 
-            currentDateStr=new Date().toISOString().split('T')[0]; loadData(currentDateStr); 
-        }
-
+        function changeDate(n) { const d = new Date(currentDateStr); d.setDate(d.getDate()+n); currentDateStr=d.toISOString().split('T')[0]; loadData(currentDateStr); }
+        function goToday() { currentDateStr=new Date().toISOString().split('T')[0]; loadData(currentDateStr); }
         function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? 'flex' : 'none'; }
         
-        // 初始啟動
         if (currentApiUrl) loadData(currentDateStr);
     </script>
 </body>
