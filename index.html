@@ -48,7 +48,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 通用返回導航 */
-        .back-nav { display: flex; align-items: center; margin-bottom: 15px; cursor: pointer; color: var(--primary); font-weight: 600; font-size: 16px; opacity: 0.9; transition: 0.2s; }
+        .back-nav { display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; color: var(--primary); font-weight: 600; font-size: 16px; opacity: 0.9; transition: 0.2s; }
         .back-nav:active { opacity: 0.5; }
         .back-nav span { margin-right: 6px; font-size: 20px; font-weight: bold; }
 
@@ -87,7 +87,7 @@
         /* =========================================
            4. 每日頁面 (Daily) - 100% 復刻 v5.11.4
            ========================================= */
-        .daily-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 10px 4px 0 4px; }
+        .daily-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 4px; }
         .header-date h1 { font-size: 36px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -1px; color: var(--text-main); }
         .header-date span { font-size: 15px; font-weight: 600; color: var(--text-main); }
         
@@ -98,8 +98,11 @@
 
         /* S_Goal 精密對齊卡片 */
         .main-card { 
-            background: var(--card); border-radius: 24px; padding: 24px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06); margin-bottom: 30px; text-align: center; 
+            background: var(--card); border-radius: 20px; 
+            padding: 16px 20px; /* 原本 24px -> 上下縮減 */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
+            margin-bottom: 16px; /* 原本 30px -> 拉近下方任務 */
+            text-align: center;
         }
         .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .bar-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: var(--text-sub); font-weight: 600; }
@@ -182,8 +185,14 @@
         .star-node { width: 50px; height: 50px; border-radius: 50%; background: #F8FAFC; color: var(--primary); border: 1.5px solid #E1E8F0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .star-node.empty { border: 1.5px dashed #DDD; background: none; color: transparent; }
 
-        .quote-area { text-align: center; margin: 30px 0; color: var(--gold); font-style: italic; font-weight: 600; font-size: 15px; padding: 0 20px; line-height: 1.6; letter-spacing: 0.5px; }
-        .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 10px 40px 10px; border-top: 1px solid #EEE; margin-top: auto; }
+        .quote-area { text-align: center; 
+            margin: 10px 0 10px 0; /* 上 右 下 左：大幅減少留白 */
+            color: var(--gold); font-style: italic; font-weight: 600; font-size: 14px; 
+            padding: 0 10px; line-height: 1.4; }
+        .footer-nav { display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px 10px 30px 10px; /* 上方縮減，下方保留給手機 Home 條 */
+            border-top: 1px solid #EEE; 
+            margin-top: 0; /* 移除額外推擠 */ }
         .nav-btn { background: none; border: none; font-size: 15px; color: var(--primary); font-weight: 700; cursor: pointer; min-width: 60px; padding: 10px; }
         .nav-center-btn { background: none; border: none; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-light); transition: 0.3s; }
         .is-today-label { color: var(--text-main) !important; font-weight: 800; cursor: default; transform: scale(1.1); }
